@@ -1,4 +1,5 @@
 // GET requests to /filename would return "Hello, world!"
+
 import App from "../../src/App";
 
 const html = `
@@ -7,7 +8,7 @@ const html = `
 <head>
 </head>
 <body>
-<App/>
+        ${<App/>}
 </body>
 </html>
 `
