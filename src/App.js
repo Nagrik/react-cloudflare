@@ -207,7 +207,7 @@ function App() {
 
         <SameAddress sameAddress={sameAddress}>
         {
-            !sameAddress && (
+            sameAddress === false && (
                 <>
                 <Subtitle2>
                 Address
