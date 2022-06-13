@@ -65,11 +65,12 @@ function App() {
         //     const abc = countContact.splice(qwe, 1);
         //     console.log(abc)
         // }
-        const newArray = countContact.filter(function (f) {
-            return f.id !== id ;
-        });
-        console.log(newArray, 'new')
-        setCountContact(newArray)
+        // const newArray = countContact.filter(function (f) {
+        //     return f.id !== id ;
+        // });
+        setCountContact(countContact => countContact.filter(item => item.id !== id));
+        // console.log(newArray, 'new')
+        // setCountContact(newArray)
     }
     return (
     <Wrapper>
@@ -129,15 +130,19 @@ function App() {
                 <CSSTransition
                     timeout={500}
                     classNames="item"
+                    key={i.id}
                 >
+                    <div>
                             <AdditionalContact
-                                contactNumber={i.id}
+                                contactNumber={index + 1}
                                 key={index}
+                                index={i.id}
                                 item={i}
                                 countContact={countContact}
                                 handleDeleteContact={() => handleDeleteContact(i.id)}
                                 setCountContact={setCountContact}
                             />
+                    </div>
                 </CSSTransition>
             ))
         }

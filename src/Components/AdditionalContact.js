@@ -9,34 +9,49 @@ const AdditionalContact = ({contactNumber, setCountContact, countContact, handle
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
-    const [isChecked, setIsChecked] = useState(false);
+    const [includeEmails, setIncludeEmails] = useState(false);
 
     useEffect(() => {
         body()
-    }, [firstName, lastName, email, isChecked])
+    }, [firstName, lastName, email, includeEmails])
+    console.log(countContact)
     const body = () => {
         const arr = countContact
-        arr.filter((itemArr) => itemArr.id === item.id ? itemArr.firstName = firstName : '')
+        arr.map((itemArr) => itemArr.id === item.id ?
+            {...itemArr, firstName: firstName, lastName: lastName, email: email, includeEmails: includeEmails} : itemArr)
+
         setCountContact(arr);
     }
-    const handleChangeFirstName = (e) => {
-        const name = e.target.value
+    // console.log(includeEmails)
+    const handleChangeFirstName = (e, id) => {
+        const newName = e.target.value
+        const lastArr = countContact.map((i)=> i.id === id ? {...i, firstName: newName} : i)
+        setCountContact(lastArr);
+    }
+    const handleChangeSecondName = (e, id) => {
+        const newName = e.target.value
+        const lastArr = countContact.map((i)=> i.id === id ? {...i, lastName: newName} : i)
+        setCountContact(lastArr);
+        // countContact[id][name] = name;
+    }
+    const handleChangeEmail = (e, id) => {
+        const newName = e.target.value
+        const lastArr = countContact.map((i)=> i.id === id ? {...i, email: newName} : i)
+        setCountContact(lastArr);
+    }
 
-        setFirstName(name)
-        // countContact[id][name] = name;
+    const handleChangeCheckBox = (e, id) => {
+        const newName = e.target.checked
+        const lastArr = countContact.map((i)=> i.id === id ? {...i, includeEmails: newName} : i)
+        setCountContact(lastArr);
     }
-    const handleChangeSecondName = (e) => {
-        const lastName = e.target.value
-        setLastName(lastName)
-        // countContact[id][name] = name;
-    }
-    const handleChangeEmail = (e) => {
-        const email = e.target.value
-        setEmail(email)
-        // countContact[id][name] = name;
-    }
-    console.log(countContact, 'count')
+    // console.log(countContact, 'count')
 
+    // const onInputChange = (e, id) => {
+    //     const newName = e.target.value
+    //     const lastArr = countContact.map((i)=> i.id === id ? {...i, firstName: newName} : i)
+    //     setCountContact(lastArr);
+    // };
     return (
         <Wrapper index={item.id} countContact={countContact} className={'item'}>
             <AdditionalContactWrapper>
@@ -60,7 +75,7 @@ const AdditionalContact = ({contactNumber, setCountContact, countContact, handle
                         index={item.id}
                         value={item.firstName}
                         countContact={countContact}
-                        onChange={(e) => handleChangeFirstName(e)}
+                        onChange={(e) => handleChangeFirstName(e, item.id)}
                     />
                 </InputWrapper>
                 <Space/>
@@ -71,7 +86,7 @@ const AdditionalContact = ({contactNumber, setCountContact, countContact, handle
                         background={'#F5F2F2FF'}
                         index={item.id}
                         countContact={countContact}
-                        onChange={(e) => handleChangeSecondName(e.target.value)}
+                        onChange={(e) => handleChangeSecondName(e, item.id)}
                     />
                 </InputWrapper>
             </ContactInputsWrapper>
@@ -83,12 +98,12 @@ const AdditionalContact = ({contactNumber, setCountContact, countContact, handle
                     background={'#F5F2F2FF'}
                     index={item.id}
                     countContact={countContact}
-                    onChange={(e) => handleChangeEmail(e.target.value)}
+                    onChange={(e) => handleChangeEmail(e, item.id)}
                 />
             </FormWrapp>
-            <label className="container" onClick={() => setIsChecked(!isChecked)}>
+            <label className="container">
                 Include in billing emails
-                <input type="checkbox"/>
+                <input type="checkbox"  onChange={(e) => handleChangeCheckBox(e, item.id)}/>
                     <span className="checkmark"></span>
             </label>
         </Wrapper>
@@ -111,9 +126,9 @@ opacity: 0;
 
 const Wrapper = styled.div`
   padding: 25px 25px 30px 20px;
-  background-color: ${props => props.index === props.countContact[0] ? '#F5F2F2FF' : '#fff'};
+  background-color: ${props => props.index === props.countContact[0].id ? '#F5F2F2FF' : '#fff'};
   margin-bottom: 15px;
-  border: ${props => props.index === props.countContact[0] ? '1px solid #F5F2F2FF' : 'none'};};
+  border: ${props => props.index === props.countContact[0].id ? '1px solid #F5F2F2FF' : 'none'};};
 `
 
 const FormWrapp = styled.div`

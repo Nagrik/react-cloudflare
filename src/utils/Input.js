@@ -30,7 +30,7 @@ const InputElement = styled.input`
   width: 100%;
   padding: 8px 10px;
   outline: none;
-  background-color: ${props => props.countContact && props.index === props.countContact[0]  ? "#F5F2F2FF ": "#fff"};
+  background-color: ${props => props.countContact && props.index === props.countContact[0].id  ? "#F5F2F2FF ": "#fff"};
 
   &::placeholder {
     color: #c4c4c4;
@@ -38,6 +38,6 @@ const InputElement = styled.input`
 
   &:focus {
     border-bottom: 2px dashed hsl(207, 85%, 60%);
-    background-color:${props =>props.countContact &&  props.index === props.countContact[0] ? "#e9e7e7" :  '#F5F2F2FF' };
+    background-color:${props =>props.countContact &&  props.index === props.countContact[0].id ? "#e9e7e7" :  '#F5F2F2FF' };
   }
 `
