@@ -1,0 +1,111 @@
+/* The container */
+.container {
+    display: block;
+    position: relative;
+    padding-left: 50px;
+    margin-top: 20px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-size: 12px;
+}
+
+/* Hide the browser's default checkbox */
+.container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+    position: absolute;
+    top: -4px;
+    left: 27px;
+    height: 13px;
+    width: 13px;
+    background-color: #eee;
+    border: 2px solid #ccc;
+}
+
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {
+    background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.container input:checked ~ .checkmark {
+    background-color: #2196F3;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the checkmark when checked */
+.container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* Style the checkmark/indicator */
+.container .checkmark:after {
+    left: 4px;
+    top: 0px;
+    width: 3px;
+    height: 8px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+
+
+.item-enter {
+    /*opacity: 0;*/
+    transform: scale(0, 1)
+}
+.item-enter-active {
+    /*opacity: 1;*/
+    transform: scale(1, 1);
+    transition: transform 300ms ease-in;
+}
+
+.item-exit {
+    opacity: 1;
+}
+.item-exit-active {
+    opacity: 0;
+    transition: opacity 300ms ease-in;
+}
+
+.address-enter {
+    /*opacity: 0;*/
+    transform: scale(0, 1)
+}
+.address-enter-active {
+    /*opacity: 1;*/
+    transform: scale(1, 1);
+    transition: transform 300ms ease-in;
+}
+
+.address-exit {
+    opacity: 1;
+}
+.address-exit-active {
+    opacity: 0;
+    transition: opacity 300ms ease-in;
+}
+
+
+.Wrapper.exited{
+
+}
