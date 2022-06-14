@@ -20,6 +20,7 @@ const Wrapper = styled.div`
   display: flex;
   align-items: center;
   font-size: 12px;
+  font-family: 'Verdana', sans-serif;
   color: white;
   justify-content: center;
   margin-top: 15px;
@@ -28,6 +29,7 @@ const Wrapper = styled.div`
 
 const Plus = styled.div`
     font-size: 16px;
+  font-family: 'Verdana', sans-serif;
   padding-bottom: 2px;
 `
 

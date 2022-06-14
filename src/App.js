@@ -9,11 +9,22 @@ import useOnClickOutside from "./utils/useOnClickOutside";
 import SelectCountryPostal from "./Components/SelectCountryPostal";
 import SelectCountryStreet from "./Components/SelectCountryStreet";
 import {sort} from "./utils/sortUtils";
+import useInput from "./utils/useInput";
 function App() {
     const [countContact, setCountContact] = useState([{firstName:'', lastName: '', email: '', includeEmails: false, id: 1}])
     const [countryOpen, setCountryOpen] = useState(false)
     const [countryStreetOpen, setCountryStreetOpen] = useState(false)
     const [sameAddress, setSameAddress] = useState(false)
+
+    const [submitPressed, setSumbitPressed] = useState(false)
+
+    const [email, setEmail] = useInput(null)
+    const [radio, setRadio] = useInput(null)
+
+
+    const handleSubmit = () => {
+        setSumbitPressed(true)
+    }
 
 
 
@@ -41,37 +52,21 @@ function App() {
         }
     });
 
-    // const arr = Array(countContact.length).fill().map((x,i)=>i + 1)
-
-    const calculateOrdinalNumber = countContact && countContact.map(
-        (item, index) => ({ ...item, ordinalNumber: index + 1 }),
-    );
-
-    const withoutNone = [];
-    calculateOrdinalNumber?.forEach((item) => {
-        if (item) withoutNone.push(item);
-    });
-    const sorted = sort(withoutNone,
-        ((item) => item), 'asc', 'number');
-
     const toggleAddress = () => {
         setSameAddress(!sameAddress)
     }
 
     const handleDeleteContact = (id) => {
-        console.log(id)
-        // const qwe = countContact.indexOf(index);
-        // if (qwe > -1) {
-        //     const abc = countContact.splice(qwe, 1);
-        //     console.log(abc)
-        // }
-        // const newArray = countContact.filter(function (f) {
-        //     return f.id !== id ;
-        // });
         setCountContact(countContact => countContact.filter(item => item.id !== id));
-        // console.log(newArray, 'new')
-        // setCountContact(newArray)
     }
+
+    const handleChangeRadio = (e, value) => {
+        setRadio(e.target.value)
+    }
+
+    console.log(Boolean(email && submitPressed))
+
+
     return (
     <Wrapper>
       <LogoWrapper>
@@ -114,10 +109,22 @@ function App() {
                 <Input placeholder={'Last'}/>
             </InputWrapper>
         </ContactInputsWrapper>
-        <SubtitleRequired>
-            Email
-        </SubtitleRequired>
-        <Input required={true}/>
+                <EmailRequired email={!email && submitPressed}>
+                    <SubtitleRequired>
+                        Email
+                    </SubtitleRequired>
+                    <Input required={true} email={email} onChange={setEmail} background={!email ? 'rgba(255,203,218,-0.53)' : '#fff'} />
+
+                </EmailRequired>
+        {
+            !email && submitPressed && (
+                <WarningEmail>
+                    <WarningText>
+                        Email is required
+                    </WarningText>
+                </WarningEmail>
+            )
+        }
         <Title>
             Additional Contacts
         </Title>
@@ -200,10 +207,15 @@ function App() {
             Street Address
         </Title>
 
-        <label style={{display: 'flex', alignItems: 'center', width: '250px'}} onClick={toggleAddress}>
-            <input type="checkbox"  name="same" value="no" style={{maxWidth: '100%', width: 'unset'}}/>
-            <div style={{whiteSpace: 'nowrap', padding: '0px 10px', fontSize: '12px'}}>Same as postal address</div>
-        </label><br/>
+        <div style={{display: 'flex', alignItems: 'center', width: '250px'}}  onClick={toggleAddress}>
+            <input type="checkbox" id={'checkbox'} checked={sameAddress}  name="same"  style={{maxWidth: '100%', width: 'unset'}}/>
+            <div style={{whiteSpace: 'nowrap', padding: '0px 10px', fontSize: '12px'}} >Same as postal address</div>
+        </div><br/>
+        <TransitionGroup>
+            <CSSTransition
+                timeout={500}
+                classNames="item"
+            >
 
         <SameAddress sameAddress={sameAddress}>
         {
@@ -235,6 +247,8 @@ function App() {
             )
         }
         </SameAddress>
+            </CSSTransition>
+        </TransitionGroup>
 
         <Title>
             Company Financial Details
@@ -243,26 +257,41 @@ function App() {
             VAT Number
         </Subtitle>
         <Input/>
+        <div style={{paddingBottom: '20px'}}>
         <Subtitle2>
             Business Registration Number
         </Subtitle2>
         <Input/>
-        <SubtitleRequired>
+        </div>
+
+    <RequiredButtons  radio={Boolean(!radio && submitPressed)}>
+    <SubtitleRequired>
             Would you be interested in paying by debit order?
         </SubtitleRequired>
         <RadioButtonsWrapp>
             <Label>
-                <input style={{maxWidth: '100%'}} type="radio" name="order" value="yes" required/>
-                   <div style={{padding: '0 5px'}}>No</div>
+                <input style={{maxWidth: '100%'}} type="radio" name="order" value="no" onChange={(e) => handleChangeRadio(e, 'No')}/>
+                   <div style={{padding: '0 0px'}}>No</div>
             </Label>
                 <br/>
             <Label>
-                <input type="radio" style={{maxWidth: '100%'}} name="order" value="no"/>
-                <div style={{padding: '0 5px'}}>Yes</div>
+                <input type="radio" style={{maxWidth: '100%'}} name="order" value="yes"  onChange={(e) => handleChangeRadio(e, 'Yes')}/>
+                <div style={{padding: '0 0px'}}>Yes</div>
             </Label><br/>
-        </RadioButtonsWrapp>
+    </RadioButtonsWrapp>
+    </RequiredButtons>
+        {
+            !radio && submitPressed &&  (
+                <WarningEmail>
+                    <WarningText>
+                       This choose is required
+                    </WarningText>
+                </WarningEmail>
+            )
+        }
+
         <ButtonsWrapper>
-            <ButtonSubmit >
+            <ButtonSubmit onClick={handleSubmit} >
                 Submit
             </ButtonSubmit>
             <ButtonSave >
@@ -281,19 +310,29 @@ const Wrapper = styled.div`
   padding: 60px;
   background-color: #fff;
 `
+const EmailRequired = styled.div`
+  padding: ${props => props.email ? '10px 10px 0 10px' : 'unset'  } ;
+  background-color: ${props => props.email ? 'rgba(255,203,218,0.53)' :  'unset' };
+`
 
-const rotate = keyframes`
-  from {
-  opacity: 1;
-  }
+const RequiredButtons = styled.div`
+  padding: ${props => props.radio ?'10px 10px 10px 10px' :  'unset'} ;
+  background-color: ${props => props.radio ? 'rgba(255,203,218,0.53)' :'unset' };
 
-  to {
-opacity: 0;
-  }
-`;
+`
 
 const SameAddress = styled.div`
-  //animation: ${props => props.sameAddress === false ? 'none' : rotate} 1s ease-in-out infinite;
+`
+
+const WarningEmail = styled.div`
+  padding: 10px;
+  background-color: hsl(2, 70%, 47%);
+  font-size: 10px;
+  font-family: 'Verdana',sans-serif;
+`
+
+const WarningText = styled.div`
+color: white;
 `
 
 const ButtonSubmit = styled.div`
@@ -400,7 +439,6 @@ const Subtitle = styled.div`
 const SubtitleRequired = styled.div`
   font-size: 12px;
   font-family: 'Verdana', sans-serif;
-  padding-top: 20px;
   &::after {
     content: '*';
     color: darkred;
@@ -411,7 +449,7 @@ const SubtitleRequired = styled.div`
 export const ContactInputsWrapper = styled.div`
 display: flex;
   justify-content: space-between;
-  padding-bottom: 15px;
+  padding-bottom: 35px;
 `
 
 export const InputWrapper = styled.div`

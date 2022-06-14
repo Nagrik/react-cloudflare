@@ -161,6 +161,7 @@ const SearchWrapper = styled.div`
 
 const Country = styled.div`
   font-size: 12px;
+  font-family: 'Verdana', sans-serif;
   position: absolute;
   left: 10px;
 `
@@ -184,6 +185,7 @@ const CountryList = styled.div`
   align-items: center;
   padding: 3px 5px;
   font-size: 12px;
+  font-family: 'Verdana', sans-serif;
   cursor: pointer;
   &:hover {
     background-color: #F5F2F2FF;
@@ -196,6 +198,7 @@ const SearchWrapperItem = styled.div`
   align-items: center;
   padding: 3px 5px;
   font-size: 12px;
+  font-family: 'Verdana', sans-serif;
   cursor: pointer;
   &:hover {
     background-color: #F5F2F2FF;
@@ -208,6 +211,7 @@ const SearchWrapperItemNone = styled.div`
   align-items: center;
   padding: 3px 5px;
   font-size: 12px;
+  font-family: 'Verdana', sans-serif;
   cursor: pointer;
   justify-content: center;
   &:hover {
@@ -231,6 +235,7 @@ const SelectElement = styled.input`
 
   &::placeholder {
     color: ${props => props.selectedCountry ? props.selectedCountry : '#c4c4c4'};
+    font-family: 'Verdana', sans-serif;
   }
 
   &:focus {

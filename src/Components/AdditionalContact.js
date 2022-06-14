@@ -14,7 +14,6 @@ const AdditionalContact = ({contactNumber, setCountContact, countContact, handle
     useEffect(() => {
         body()
     }, [firstName, lastName, email, includeEmails])
-    console.log(countContact)
     const body = () => {
         const arr = countContact
         arr.map((itemArr) => itemArr.id === item.id ?
@@ -70,7 +69,6 @@ const AdditionalContact = ({contactNumber, setCountContact, countContact, handle
                 <InputWrapper>
                     <Input
                         placeholder={'First'}
-                        background={'#F5F2F2FF'}
                         additional={'#e9e7e7'}
                         index={item.id}
                         value={item.firstName}
@@ -83,7 +81,6 @@ const AdditionalContact = ({contactNumber, setCountContact, countContact, handle
                     <Input
                         placeholder={'Last'}
                         additional={'#e9e7e7'}
-                        background={'#F5F2F2FF'}
                         index={item.id}
                         countContact={countContact}
                         onChange={(e) => handleChangeSecondName(e, item.id)}
@@ -95,13 +92,12 @@ const AdditionalContact = ({contactNumber, setCountContact, countContact, handle
             </Subtitle>
                 <Input
                     additional={'#e9e7e7'}
-                    background={'#F5F2F2FF'}
                     index={item.id}
                     countContact={countContact}
                     onChange={(e) => handleChangeEmail(e, item.id)}
                 />
             </FormWrapp>
-            <label className="container">
+            <label className="container" style={{fontFamily: 'Verdana, sans-serif', fontSize: '12px'}}>
                 Include in billing emails
                 <input type="checkbox"  onChange={(e) => handleChangeCheckBox(e, item.id)}/>
                     <span className="checkmark"></span>
