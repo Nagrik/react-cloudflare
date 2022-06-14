@@ -341,13 +341,13 @@ function App() {
         </SubtitleRequired>
         <RadioButtonsWrapp>
             <Label>
-                <input style={{maxWidth: '100%'}} type="radio" name="order" value="no" onChange={(e) => handleChangeRadio(e, 'No')}/>
-                   <div style={{padding: '0 0px'}}>No</div>
+                <input style={{width: 'unset'}} type="radio" name="order" value="no" onChange={(e) => handleChangeRadio(e, 'No')}/>
+                   <div style={{padding: '0 7px'}}>No</div>
             </Label>
                 <br/>
             <Label>
-                <input type="radio" style={{maxWidth: '100%'}} name="order" value="yes"  onChange={(e) => handleChangeRadio(e, 'Yes')}/>
-                <div style={{padding: '0 0px'}}>Yes</div>
+                <input type="radio" style={{width: 'unset'}} name="order" value="yes"  onChange={(e) => handleChangeRadio(e, 'Yes')}/>
+                <div style={{padding: '0 7px'}}>Yes</div>
             </Label><br/>
     </RadioButtonsWrapp>
     </RequiredButtons>
