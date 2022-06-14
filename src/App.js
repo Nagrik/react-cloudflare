@@ -209,7 +209,7 @@ function App() {
 
         <div style={{display: 'flex', alignItems: 'center', width: '250px'}}  onClick={toggleAddress}>
             <input type="checkbox" id={'checkbox'} checked={sameAddress}  name="same"  style={{maxWidth: '100%', width: 'unset'}}/>
-            <div style={{whiteSpace: 'nowrap', padding: '0px 10px', fontSize: '12px'}} >Same as postal address</div>
+            <div style={{whiteSpace: 'nowrap', padding: '0px 10px', fontSize: '12px', fontFamily: 'Verdana, sans-serif'}} >Same as postal address</div>
         </div><br/>
         <TransitionGroup>
             <CSSTransition
