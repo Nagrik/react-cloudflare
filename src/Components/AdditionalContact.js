@@ -138,6 +138,7 @@ const FormWrapp = styled.div`
 
 const Subtitle = styled.div`
   font-size: 12px;
+  font-family: 'Verdana', sans-serif;
   padding-top: 8px;
 `
 
@@ -152,10 +153,12 @@ const Space = styled.div`
 const Name = styled.div`
   padding-top: 15px;
   font-size: 12px;
+  font-family: 'Verdana', sans-serif;
 `
 
 const Title = styled.div`
   font-size: 16px;
+  font-family: 'Verdana', sans-serif;
   color: #54565A;
   font-weight: bold;
   padding-left: 5px;

@@ -312,6 +312,7 @@ const ButtonSave = styled.div`
   width: 80px;
   height: 33px;
   font-size: 12px;
+  font-family: 'Verdana', sans-serif;
   background-color: black;
   display: flex;
   color: white;
@@ -333,6 +334,7 @@ const Label = styled.label`
   align-items: center;
   width: 55px;
   font-size: 12px;
+  font-family: 'Verdana', sans-serif;
 `
 
 const RadioButtonsWrapp = styled.div`
@@ -347,6 +349,7 @@ const Space = styled.div`
 
 const Subtitle2 = styled.div`
   font-size: 12px;
+  font-family: 'Verdana', sans-serif;
   padding-top: 20px;
   padding-bottom: 10px;
 `
@@ -374,6 +377,7 @@ const WelcomeWrapper = styled.div`
 
 export const Title = styled.div`
   font-size: 16px;
+  font-family: 'Verdana', sans-serif;
   color: #54565A;
   font-weight: bold;
   padding-bottom: 14px;
@@ -382,6 +386,7 @@ export const Title = styled.div`
 
 const Title2 = styled.div`
   font-size: 16px;
+  font-family: 'Verdana', sans-serif;
   color: #54565A;
   font-weight: bold;
   padding-bottom: 14px;
@@ -389,10 +394,12 @@ const Title2 = styled.div`
 
 const Subtitle = styled.div`
   font-size: 12px;
+  font-family: 'Verdana', sans-serif;
 `
 
 const SubtitleRequired = styled.div`
   font-size: 12px;
+  font-family: 'Verdana', sans-serif;
   padding-top: 20px;
   &::after {
     content: '*';
