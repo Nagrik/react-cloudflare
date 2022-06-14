@@ -300,6 +300,7 @@ const ButtonSubmit = styled.div`
   width: 80px;
   height: 33px;
   font-size: 12px;
+  font-family: 'Verdana', sans-serif;
   background-color: #eeeeee;
   display: flex;
   align-items: center;
