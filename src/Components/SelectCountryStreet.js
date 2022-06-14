@@ -6,7 +6,7 @@ import ArrowDownIcon from "../assets/Icons/ArrowDownIcon";
 import useOnClickOutside from "../utils/useOnClickOutside";
 import search from "../utils/search";
 
-const SelectCountryStreet = ({countryOpen, setCountryOpen}) => {
+const SelectCountryStreet = ({countryOpen, setCountryOpen, setSelectedCountryStreet}) => {
     const [country, setCountry] = useState(null)
     const [inputValue, setInputValue] = useState('')
     const [selectedCountry, setSelectedCountry] = useState(false)

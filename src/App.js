@@ -3,6 +3,7 @@ import logo from "./assets/images/logo.png";
 import { Input } from "./utils/Input";
 import AdditionalContact from "./Components/AdditionalContact";
 import {useState} from "react";
+import './Components/checkbox.css'
 import Button from "./utils/Button";
 import {CSSTransition, Transition, TransitionGroup} from "react-transition-group";
 import useOnClickOutside from "./utils/useOnClickOutside";
@@ -10,6 +11,7 @@ import SelectCountryPostal from "./Components/SelectCountryPostal";
 import SelectCountryStreet from "./Components/SelectCountryStreet";
 import {sort} from "./utils/sortUtils";
 import useInput from "./utils/useInput";
+import Settings from "./assets/Icons/Settings";
 function App() {
     const [countContact, setCountContact] = useState([{firstName:'', lastName: '', email: '', includeEmails: false, id: 1}])
     const [countryOpen, setCountryOpen] = useState(false)
@@ -17,17 +19,87 @@ function App() {
     const [sameAddress, setSameAddress] = useState(false)
 
     const [submitPressed, setSumbitPressed] = useState(false)
-
     const [email, setEmail] = useInput(null)
     const [radio, setRadio] = useInput(null)
 
+    const [companyName, setCompanyName] = useInput(null)
+    //Primary Billing Contact
+    const [firstName, setFirstName] = useInput(null)
+    const [lastName, setLastName] = useInput(null)
 
-    const handleSubmit = () => {
-        setSumbitPressed(true)
+    //Company Contact Details
+    const [mobile, setMobile] = useInput(null)
+    const [website, setWebsite] = useInput(null)
+
+    //Postal Address
+    const [attention, setAttention] = useInput(null)
+    const [addressLine1, setAddressLine1] = useInput(null)
+    const [addressLine2, setAddressLine2] = useInput(null)
+    const [city, setCity] = useInput(null)
+    const [state, setState] = useInput(null)
+    const [portal, setPortal] = useInput(null)
+    const [selectedCountryPostal, setSelectedCountryPostal] = useState(null)
+
+    //Street Address
+    const [addressLineStreet1, setAddressLineStreet1] = useInput(null)
+    const [addressLineStreet2, setAddressLineStreet2] = useInput(null)
+    const [cityStreet, setCityStreet] = useInput(null)
+    const [stateStreet, setStateStreet] = useInput(null)
+    const [portalStreet, setPortalStreet] = useInput(null)
+    const [selectedCountryStreet, setSelectedCountryStreet] = useState(null)
+
+    //Company Financial Details
+    const [VATNumber, setVATNumber] = useInput(null)
+    const [registrationNumber, setRegistrationNumber] = useInput(null)
+
+
+    const body = {
+        CompanyName: companyName,
+        PrimaryBillingContact: {
+            FirstName: firstName,
+            LastName: lastName,
+            Email: email,
+        },
+        AdditionalContacts: {
+           countContact,
+        },
+        CompanyContactDetails: {
+            Mobile: mobile,
+            Website: website,
+        },
+        PostalAddress: {
+            Attention: attention,
+            AddressLine1: addressLine1,
+            AddressLine2: addressLine2,
+            City: city,
+            State: state,
+            Portal: portal,
+            Country: selectedCountryPostal,
+        },
+        StreetAddress: {
+            SameAsPostalAddress: sameAddress,
+            Attention: `${sameAddress ? attention : ''}`,
+            AddressLine1: `${sameAddress ? addressLine1 : addressLineStreet1}`,
+            AddressLine2: `${sameAddress ? addressLine2 : addressLineStreet2}`,
+            City: `${sameAddress ? city : cityStreet}`,
+            State: `${sameAddress ? state : stateStreet}`,
+            Portal: `${sameAddress ? portal : portalStreet}`,
+            Country: `${sameAddress ? selectedCountryPostal : selectedCountryStreet}`,
+        },
+        CompanyFinancialDetails:{
+            VATNumber: VATNumber,
+            RegistrationNumber: registrationNumber,
+        }
     }
 
 
 
+
+    const handleSubmit = () => {
+        setSumbitPressed(true)
+        console.log(body)
+    }
+    console.log(selectedCountryPostal)
 
     const handleAddContact = (arr) => {
         if(arr.length === 0){
@@ -64,7 +136,6 @@ function App() {
         setRadio(e.target.value)
     }
 
-    console.log(Boolean(email && submitPressed))
 
 
     return (
@@ -90,7 +161,7 @@ function App() {
         <Subtitle>
             Company Name
         </Subtitle>
-        <Input/>
+        <Input onChange={setCompanyName}/>
         <Title>
             Company Contact Persons
         </Title>
@@ -102,11 +173,11 @@ function App() {
         </Subtitle>
         <ContactInputsWrapper>
             <InputWrapper>
-                <Input placeholder={'First'}/>
+                <Input placeholder={'First'} onChange={setFirstName}/>
             </InputWrapper>
             <Space/>
             <InputWrapper>
-                <Input placeholder={'Last'}/>
+                <Input placeholder={'Last'} onChange={setLastName}/>
             </InputWrapper>
         </ContactInputsWrapper>
                 <EmailRequired email={!email && submitPressed}>
@@ -135,7 +206,7 @@ function App() {
             {
                 countContact.map((i , index) => (
                 <CSSTransition
-                    timeout={500}
+                    timeout={300}
                     classNames="item"
                     key={i.id}
                 >
@@ -164,11 +235,11 @@ function App() {
         <Subtitle>
             Mobile
         </Subtitle>
-        <Input/>
+        <Input onChange={setMobile}/>
         <Subtitle2>
             Website
         </Subtitle2>
-        <Input/>
+        <Input onChange={setWebsite}/>
         </CompanyDetails>
         <Title>
             Company Addresses
@@ -179,27 +250,27 @@ function App() {
         <Subtitle>
             Attention
         </Subtitle>
-        <Input/>
+        <Input onChange={setAttention}/>
         <Subtitle2>
             Address
         </Subtitle2>
-        <Input placeholder={'Address Line 1'}/>
-        <Input placeholder={'Address Line 2'}/>
+        <Input placeholder={'Address Line 1'} onChange={setAddressLine1}/>
+        <Input placeholder={'Address Line 2'} onChange={setAddressLine2}/>
         <ContactInputsWrapper>
             <InputWrapper>
-                <Input placeholder={'City'}/>
+                <Input placeholder={'City'} onChange={setCity}/>
             </InputWrapper>
                 <Space/>
             <InputWrapper>
-                <Input placeholder={'State / Province / Region'}/>
+                <Input placeholder={'State / Province / Region'} onChange={setState}/>
             </InputWrapper>
             <Space/>
             <InputWrapper>
-                <Input placeholder={'Portal / Zip Code'}/>
+                <Input placeholder={'Portal / Zip Code'} onChange={setPortal}/>
             </InputWrapper>
             <Space/>
             <InputWrapper ref={countryRef}>
-                <SelectCountryPostal countryOpen={countryOpen} setCountryOpen={setCountryOpen}/>
+                <SelectCountryPostal countryOpen={countryOpen} setCountryOpen={setCountryOpen} setSelectedCountryPostal={setSelectedCountryPostal}/>
             </InputWrapper>
         </ContactInputsWrapper>
 
@@ -213,7 +284,7 @@ function App() {
         </div><br/>
         <TransitionGroup>
             <CSSTransition
-                timeout={500}
+                timeout={300}
                 classNames="item"
             >
 
@@ -224,23 +295,23 @@ function App() {
                 <Subtitle2>
                 Address
             </Subtitle2>
-            <Input placeholder={'Address Line 1'}/>
-            <Input placeholder={'Address Line 2'}/>
+            <Input placeholder={'Address Line 1'} onChange={setAddressLineStreet1}/>
+            <Input placeholder={'Address Line 2'} onChange={setAddressLineStreet2}/>
             <ContactInputsWrapper>
             <InputWrapper>
-            <Input placeholder={'City'}/>
+            <Input placeholder={'City'} onChange={setCityStreet}/>
             </InputWrapper>
             <Space/>
             <InputWrapper>
-            <Input placeholder={'State / Province / Region'}/>
+            <Input placeholder={'State / Province / Region'} onChange={setStateStreet}/>
             </InputWrapper>
             <Space/>
             <InputWrapper>
-            <Input placeholder={'Portal / Zip Code'}/>
+            <Input placeholder={'Portal / Zip Code'} onChange={setPortalStreet}/>
             </InputWrapper>
             <Space/>
             <InputWrapper ref={countryStreetRef}>
-            <SelectCountryStreet countryOpen={countryStreetOpen} setCountryOpen={setCountryStreetOpen}/>
+            <SelectCountryStreet countryOpen={countryStreetOpen} setCountryOpen={setCountryStreetOpen} setSelectedCountryStreet={setSelectedCountryStreet}/>
             </InputWrapper>
             </ContactInputsWrapper>
                 </>
@@ -256,12 +327,12 @@ function App() {
         <Subtitle>
             VAT Number
         </Subtitle>
-        <Input/>
+        <Input onChange={setVATNumber}/>
         <div style={{paddingBottom: '20px'}}>
         <Subtitle2>
             Business Registration Number
         </Subtitle2>
-        <Input/>
+        <Input onChange={setRegistrationNumber}/>
         </div>
 
     <RequiredButtons  radio={Boolean(!radio && submitPressed)}>
@@ -292,10 +363,23 @@ function App() {
 
         <ButtonsWrapper>
             <ButtonSubmit onClick={handleSubmit} >
-                Submit
+                <CSSTransition
+                    classNames="settings"
+                >
+                    <div className='settings-active' style={{height: '15px'}}>
+                        <Settings/>
+                    </div>
+                </CSSTransition>
             </ButtonSubmit>
             <ButtonSave >
-                Save
+                {/*Save*/}
+                <CSSTransition
+                    classNames="settings"
+                >
+                    <div className='settings-active' style={{height: '15px'}}>
+                      <Settings/>
+                    </div>
+                </CSSTransition>
             </ButtonSave>
         </ButtonsWrapper>
     </Wrapper>

@@ -99,25 +99,36 @@
     transition: height 300ms ease-in, width 300ms ease-in;
 }
 
-.address-enter {
-    /*opacity: 0;*/
-    transform: scale(0, 1)
-}
-.address-enter-active {
-    /*opacity: 1;*/
-    transform: scale(1, 1);
-    transition: transform 300ms ease-in;
-}
+@keyframes circle{
+    0%{
+        transform:rotate(0deg)
+        /*rotate(0deg);*/
 
-.address-exit {
-    opacity: 1;
-}
-.address-exit-active {
-    opacity: 0;
-    transition: opacity 300ms ease-in;
+    }
+    50%{
+        transform:rotate(180deg)
+        /*rotate(180deg);*/
+    }
+    100%{
+        transform:rotate(360deg)
+        /*rotate(360deg);*/
+    }
 }
 
 
-.Wrapper.exited{
 
+.settings-enter {
+    animation: circle 1s infinite;
+}
+
+.settings-active {
+    animation: circle 1s infinite;
+}
+
+.settings-exit {
+    animation: circle 1s infinite;
+}
+
+.settings-exit-active {
+    animation: circle 1s infinite;
 }

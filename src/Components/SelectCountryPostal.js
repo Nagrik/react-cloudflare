@@ -6,11 +6,13 @@ import ArrowDownIcon from "../assets/Icons/ArrowDownIcon";
 import useOnClickOutside from "../utils/useOnClickOutside";
 import search from "../utils/search";
 
-const SelectCountryPostal = ({countryOpen, setCountryOpen}) => {
+const SelectCountryPostal = ({countryOpen, setCountryOpen, setSelectedCountryPostal}) => {
     const [country, setCountry] = useState(null)
     const [inputValue, setInputValue] = useState('')
     const [selectedCountry, setSelectedCountry] = useState(false)
     const [inputActive, setInputActive] = useState(false)
+
+
 
     const searchItems = search(countryList().data, inputValue, ({ label }) => label);
 
@@ -35,6 +37,7 @@ const SelectCountryPostal = ({countryOpen, setCountryOpen}) => {
     }
     const handleCountryChange = (country) => {
         setCountry(country.label)
+        setSelectedCountryPostal(country.label)
         setCountryOpen(false)
         setInputValue('')
     }
