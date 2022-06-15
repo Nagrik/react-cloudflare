@@ -2,7 +2,7 @@ import styled, {keyframes} from "styled-components";
 import logo from "./assets/images/logo.png";
 import { Input } from "./utils/Input";
 import AdditionalContact from "./Components/AdditionalContact";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import './Components/checkbox.css'
 import Button from "./utils/Button";
 import {CSSTransition, Transition, TransitionGroup} from "react-transition-group";
@@ -12,6 +12,7 @@ import SelectCountryStreet from "./Components/SelectCountryStreet";
 import {sort} from "./utils/sortUtils";
 import useInput from "./utils/useInput";
 import Settings from "./assets/Icons/Settings";
+import axios from "axios";
 function App() {
     const [countContact, setCountContact] = useState([{firstName:'', lastName: '', email: '', includeEmails: false, id: 1}])
     const [countryOpen, setCountryOpen] = useState(false)
@@ -93,13 +94,18 @@ function App() {
     }
 
 
+    const response = () => {
+        axios.get('https://worker-typescript-template.nahryshko.workers.dev/api/posts').then((response) => console.log(response))
+    }
 
+    useEffect(() => {
+        response()
+    }, [])
 
     const handleSubmit = () => {
         setSumbitPressed(true)
         console.log(body)
     }
-    console.log(selectedCountryPostal)
 
     const handleAddContact = (arr) => {
         if(arr.length === 0){
@@ -365,6 +371,7 @@ function App() {
             <ButtonSubmit onClick={handleSubmit} >
                 <CSSTransition
                     classNames="settings"
+                    timeout={300}
                 >
                     <div className='settings-active' style={{height: '15px'}}>
                         <Settings/>
@@ -375,6 +382,7 @@ function App() {
                 {/*Save*/}
                 <CSSTransition
                     classNames="settings"
+                    timeout={300}
                 >
                     <div className='settings-active' style={{height: '15px'}}>
                       <Settings/>

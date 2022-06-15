@@ -1,10 +1,16 @@
-account_id = "1c2b97f5ee91f8c89a1459ae81a11e98"
-name = "my-react-app"
+name = "react-cloudflare"
 type = "webpack"
-route = ""
+zone_id = "6dbd4254f2f1ff9809acc76f94ad6fa1"
+account_id = "1c2b97f5ee91f8c89a1459ae81a11e98"
 workers_dev = true
-zone_id = ""
+compatibility_date = "2020-01-01"
 
 [site]
 bucket = "./build"
-entry-point = "workers-site"
+entry-point = "worker-site"
+
+[build]
+command = "npm run build"
+
+[build.upload]
+format = "service-worker"
