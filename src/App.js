@@ -55,47 +55,50 @@ function App() {
 
 
     const body = {
-        CompanyName: companyName,
-        PrimaryBillingContact: {
-            FirstName: firstName,
-            LastName: lastName,
-            Email: email,
-        },
-        AdditionalContacts: {
-           countContact,
-        },
-        CompanyContactDetails: {
-            Mobile: mobile,
-            Website: website,
-        },
-        PostalAddress: {
-            Attention: attention,
-            AddressLine1: addressLine1,
-            AddressLine2: addressLine2,
-            City: city,
-            State: state,
-            Portal: portal,
-            Country: selectedCountryPostal,
-        },
-        StreetAddress: {
-            SameAsPostalAddress: sameAddress,
-            Attention: `${sameAddress ? attention : ''}`,
-            AddressLine1: `${sameAddress ? addressLine1 : addressLineStreet1}`,
-            AddressLine2: `${sameAddress ? addressLine2 : addressLineStreet2}`,
-            City: `${sameAddress ? city : cityStreet}`,
-            State: `${sameAddress ? state : stateStreet}`,
-            Portal: `${sameAddress ? portal : portalStreet}`,
-            Country: `${sameAddress ? selectedCountryPostal : selectedCountryStreet}`,
-        },
-        CompanyFinancialDetails:{
-            VATNumber: VATNumber,
-            RegistrationNumber: registrationNumber,
+        data:{
+            CompanyName: companyName,
+            PrimaryBillingContact: {
+                FirstName: firstName,
+                LastName: lastName,
+                Email: email,
+            },
+            AdditionalContacts: {
+                countContact,
+            },
+            CompanyContactDetails: {
+                Mobile: mobile,
+                Website: website,
+            },
+            PostalAddress: {
+                Attention: attention,
+                AddressLine1: addressLine1,
+                AddressLine2: addressLine2,
+                City: city,
+                State: state,
+                Portal: portal,
+                Country: selectedCountryPostal,
+            },
+            StreetAddress: {
+                SameAsPostalAddress: sameAddress,
+                Attention: `${sameAddress ? attention : ''}`,
+                AddressLine1: `${sameAddress ? addressLine1 : addressLineStreet1}`,
+                AddressLine2: `${sameAddress ? addressLine2 : addressLineStreet2}`,
+                City: `${sameAddress ? city : cityStreet}`,
+                State: `${sameAddress ? state : stateStreet}`,
+                Portal: `${sameAddress ? portal : portalStreet}`,
+                Country: `${sameAddress ? selectedCountryPostal : selectedCountryStreet}`,
+            },
+            CompanyFinancialDetails:{
+                VATNumber: VATNumber,
+                RegistrationNumber: registrationNumber,
+            }
         }
+
     }
 
 
     const response = () => {
-        axios.get('https://worker-typescript-template.nahryshko.workers.dev/api/posts').then((response) => console.log(response))
+        // axios.get('https://worker-typescript-template.nahryshko.workers.dev/api/posts').then((response) => console.log(response))
     }
 
     useEffect(() => {
@@ -105,6 +108,7 @@ function App() {
     const handleSubmit = () => {
         setSumbitPressed(true)
         console.log(body)
+        axios.post('https://worker-typescript-template.nahryshko.workers.dev/api/form', body)
     }
 
     const handleAddContact = (arr) => {
@@ -374,9 +378,10 @@ function App() {
                     timeout={300}
                 >
                     <div className='settings-active' style={{height: '15px'}}>
-                        <Settings/>
+                        {/*<Settings/>*/}
                     </div>
                 </CSSTransition>
+                Submit
             </ButtonSubmit>
             <ButtonSave >
                 {/*Save*/}
