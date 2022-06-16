@@ -105,10 +105,10 @@ function App() {
         response()
     }, [])
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         setSumbitPressed(true)
         console.log(body)
-        axios.post('https://worker-typescript-template.nahryshko.workers.dev/api/form', body)
+        await axios.post('https://worker-typescript-template.nahryshko.workers.dev/api/form', body)
     }
 
     const handleAddContact = (arr) => {
