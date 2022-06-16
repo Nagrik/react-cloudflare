@@ -55,7 +55,7 @@ function App() {
 
 
     const body = {
-        data:{
+        form:{
             CompanyName: companyName,
             PrimaryBillingContact: {
                 FirstName: firstName,
@@ -93,23 +93,16 @@ function App() {
                 RegistrationNumber: registrationNumber,
             }
         }
-
     }
 
 
-    const response = () => {
-        // axios.get('https://worker-typescript-template.nahryshko.workers.dev/api/posts').then((response) => console.log(response))
-    }
 
-    useEffect(() => {
-        response()
-    }, [])
-
-    const handleSubmit = async () => {
+    const handleSubmit =  () => {
         setSumbitPressed(true)
         console.log(body)
-        await axios.post('https://worker-typescript-template.nahryshko.workers.dev/api/form', body)
+        axios.post('https://worker-typescript-template.nahryshko.workers.dev/api/form', body)
     }
+
 
     const handleAddContact = (arr) => {
         if(arr.length === 0){
