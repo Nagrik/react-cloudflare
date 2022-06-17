@@ -214,7 +214,7 @@ function App() {
     }
 
     const handleChangeRadio = (e, value) => {
-        setRadio(e.target.value)
+        setRadio(value)
     }
 
     const handleSaveProgress = () => {
@@ -442,12 +442,12 @@ function App() {
         </SubtitleRequired>
         <RadioButtonsWrapp>
             <Label>
-                <input style={{width: 'unset'}} type="radio" name="order" checked={radio === 'no'} value={radio} onChange={(e) => handleChangeRadio(e, 'No')}/>
+                <input style={{width: 'unset'}} type="radio" name="order" checked={radio === 'No'}  onChange={(e) => handleChangeRadio(e, 'No')}/>
                    <div style={{padding: '0 7px'}}>No</div>
             </Label>
                 <br/>
             <Label>
-                <input type="radio" style={{width: 'unset'}} name="order" checked={radio === 'yes'} value={radio}  onChange={(e) => handleChangeRadio(e, 'Yes')}/>
+                <input type="radio" style={{width: 'unset'}} name="order" checked={radio === 'Yes'}   onChange={(e) => handleChangeRadio(e, 'Yes')}/>
                 <div style={{padding: '0 7px'}}>Yes</div>
             </Label><br/>
     </RadioButtonsWrapp>
