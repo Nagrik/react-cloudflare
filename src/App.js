@@ -104,6 +104,7 @@ function App() {
             setSelectedCountryPostal(responseById.PostalAddress.Country ? responseById.PostalAddress.Country : '')
 
             //StreetAddress
+            setSameAddress(responseById.StreetAddress.SameAsPostalAddress ? responseById.StreetAddress.SameAsPostalAddress : false)
             setAttentionStreet(responseById.StreetAddress.Attention ? responseById.StreetAddress.Attention : '')
             setAddressLineStreet1(responseById.StreetAddress.AddressLine1 ? responseById.StreetAddress.AddressLine1 : '')
             setAddressLineStreet2(responseById.StreetAddress.AddressLine2 ? responseById.StreetAddress.AddressLine2 : '')
