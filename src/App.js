@@ -9,13 +9,17 @@ import {CSSTransition, Transition, TransitionGroup} from "react-transition-group
 import useOnClickOutside from "./utils/useOnClickOutside";
 import SelectCountryPostal from "./Components/SelectCountryPostal";
 import SelectCountryStreet from "./Components/SelectCountryStreet";
-import {sort} from "./utils/sortUtils";
 import useInput from "./utils/useInput";
 import Settings from "./assets/Icons/Settings";
 import axios from "axios";
+import MyToast from "./Components/Toast";
+import useToggle from "./utils/useToggle";
+import SaveModal from "./Components/SaveModal";
 function App() {
     const [countContact, setCountContact] = useState([{firstName:'', lastName: '', email: '', includeEmails: false, id: 1}])
     const [countryOpen, setCountryOpen] = useState(false)
+
+    const [isError, setIsError] = useState(false)
     const [countryStreetOpen, setCountryStreetOpen] = useState(false)
     const [sameAddress, setSameAddress] = useState(false)
 
@@ -42,6 +46,7 @@ function App() {
     const [selectedCountryPostal, setSelectedCountryPostal] = useState(null)
 
     //Street Address
+    const [attentionStreet, setAttentionStreet] = useInput(null)
     const [addressLineStreet1, setAddressLineStreet1] = useInput(null)
     const [addressLineStreet2, setAddressLineStreet2] = useInput(null)
     const [cityStreet, setCityStreet] = useInput(null)
@@ -53,6 +58,69 @@ function App() {
     const [VATNumber, setVATNumber] = useInput(null)
     const [registrationNumber, setRegistrationNumber] = useInput(null)
 
+    const [sendSuccess, toggleIsSendSuccess] = useToggle(false);
+    const [warningSend, toggleWarning] = useToggle(false);
+
+    const [modal, setModal] = useState(false)
+    const [idResponse, setIdResponse] = useState()
+    const [isLoadingSave, setIsLoadingSave] = useState(false)
+    const [isLoadingSubmit, setIsLoadingSubmit] = useState(false)
+    const [location, setLocation] = useState('')
+    const [responseById, setResponseById] = useState()
+
+
+
+    useEffect(() => {
+        setLocation(window.location.href.split('/')[3])
+        if(location !== ''){
+            axios.get(`https://worker-typescript-template.nahryshko.workers.dev/api/form/${location}`).then((response) => {
+                setResponseById(response.data)
+            })
+        }
+    }, [location])
+
+    useEffect(() => {
+        console.log(responseById)
+        if(responseById){
+
+            //PrimaryBillingContact
+            setFirstName(responseById.PrimaryBillingContact.FirstName ? responseById.PrimaryBillingContact.FirstName : '')
+            setLastName(responseById.PrimaryBillingContact.LastName ? responseById.PrimaryBillingContact.LastName : '')
+            setEmail(responseById.PrimaryBillingContact.Email ? responseById.PrimaryBillingContact.Email : '')
+
+            setCompanyName(responseById.CompanyName ? responseById.CompanyName : '')
+
+            //CompanyContactDetails
+            setMobile(responseById.CompanyContactDetails.Mobile ? responseById.CompanyContactDetails.Mobile : '')
+            setWebsite(responseById.CompanyContactDetails.Website ? responseById.CompanyContactDetails.Website : '')
+
+            //PostalAddress
+            setAttention(responseById.PostalAddress.Attention ? responseById.PostalAddress.Attention : '')
+            setAddressLine1(responseById.PostalAddress.AddressLine1 ? responseById.PostalAddress.AddressLine1 : '')
+            setAddressLine2(responseById.PostalAddress.AddressLine2 ? responseById.PostalAddress.AddressLine2 : '')
+            setCity(responseById.PostalAddress.City ? responseById.PostalAddress.City : '')
+            setState(responseById.PostalAddress.State ? responseById.PostalAddress.State : '')
+            setPortal(responseById.PostalAddress.Portal ? responseById.PostalAddress.Portal : '')
+            setSelectedCountryPostal(responseById.PostalAddress.Country ? responseById.PostalAddress.Country : '')
+
+            //StreetAddress
+            setAttentionStreet(responseById.StreetAddress.Attention ? responseById.StreetAddress.Attention : '')
+            setAddressLineStreet1(responseById.StreetAddress.AddressLine1 ? responseById.StreetAddress.AddressLine1 : '')
+            setAddressLineStreet2(responseById.StreetAddress.AddressLine2 ? responseById.StreetAddress.AddressLine2 : '')
+            setCityStreet(responseById.StreetAddress.City ? responseById.StreetAddress.City : '')
+            setStateStreet(responseById.StreetAddress.State ? responseById.StreetAddress.State : '')
+            setPortalStreet(responseById.StreetAddress.Portal ? responseById.StreetAddress.Portal : '')
+            setSelectedCountryStreet(responseById.StreetAddress.Country ? responseById.StreetAddress.Country : '')
+
+            //CompanyFinancialDetails
+            setVATNumber(responseById.CompanyFinancialDetails.VATNumber ? responseById.CompanyFinancialDetails.VATNumber : '')
+            setRegistrationNumber(responseById.CompanyFinancialDetails.RegistrationNumber ? responseById.CompanyFinancialDetails.RegistrationNumber : '')
+            setRadio(responseById.CompanyFinancialDetails.DebitOrder ? responseById.CompanyFinancialDetails.DebitOrder : '')
+
+            //Count contact
+            setCountContact(responseById.AdditionalContacts.countContact ? responseById.AdditionalContacts.countContact : countContact)
+        }
+    }, [responseById])
 
     const body = {
         form:{
@@ -80,7 +148,7 @@ function App() {
             },
             StreetAddress: {
                 SameAsPostalAddress: sameAddress,
-                Attention: `${sameAddress ? attention : ''}`,
+                Attention: `${sameAddress ? attention : attentionStreet}`,
                 AddressLine1: `${sameAddress ? addressLine1 : addressLineStreet1}`,
                 AddressLine2: `${sameAddress ? addressLine2 : addressLineStreet2}`,
                 City: `${sameAddress ? city : cityStreet}`,
@@ -91,6 +159,7 @@ function App() {
             CompanyFinancialDetails:{
                 VATNumber: VATNumber,
                 RegistrationNumber: registrationNumber,
+                DebitOrder: radio
             }
         }
     }
@@ -99,9 +168,19 @@ function App() {
 
     const handleSubmit =  () => {
         setSumbitPressed(true)
-        console.log(body)
-        axios.post('https://worker-typescript-template.nahryshko.workers.dev/api/form', body)
+        if(!email || !radio){
+        setIsError(true)
+        toggleWarning(true)
+        }else{
+            setIsLoadingSubmit(true)
+           axios.post('https://worker-typescript-template.nahryshko.workers.dev/api/form', body).then((response) => {
+               setIsLoadingSubmit(false)
+               toggleIsSendSuccess(true)
+           })
+           setIsError(false)
+        }
     }
+
 
 
     const handleAddContact = (arr) => {
@@ -111,7 +190,6 @@ function App() {
             setCountContact([...countContact, {firstName:'', lastName: '', email: '', includeEmails: false, id: countContact[countContact.length -1].id + 1}])
 
         }
-        console.log(arr, 'add')
     }
 
 
@@ -139,6 +217,21 @@ function App() {
         setRadio(e.target.value)
     }
 
+    const handleSaveProgress = () => {
+        setIsLoadingSave(true)
+        axios.post('https://worker-typescript-template.nahryshko.workers.dev/api/form', body).then((response) => {
+            setIdResponse(response.data.id)
+            setIsLoadingSave(false)
+            setModal(true)
+        })
+    }
+
+
+
+    const modalRef = useOnClickOutside(() => {
+        setModal(false);
+    });
+
 
 
     return (
@@ -164,7 +257,7 @@ function App() {
         <Subtitle>
             Company Name
         </Subtitle>
-        <Input onChange={setCompanyName}/>
+        <Input onChange={setCompanyName} value={companyName}/>
         <Title>
             Company Contact Persons
         </Title>
@@ -176,18 +269,18 @@ function App() {
         </Subtitle>
         <ContactInputsWrapper>
             <InputWrapper>
-                <Input placeholder={'First'} onChange={setFirstName}/>
+                <Input placeholder={'First'} value={firstName} onChange={setFirstName}/>
             </InputWrapper>
             <Space/>
             <InputWrapper>
-                <Input placeholder={'Last'} onChange={setLastName}/>
+                <Input placeholder={'Last'} value={lastName} onChange={setLastName}/>
             </InputWrapper>
         </ContactInputsWrapper>
                 <EmailRequired email={!email && submitPressed}>
                     <SubtitleRequired>
                         Email
                     </SubtitleRequired>
-                    <Input required={true} email={email} onChange={setEmail} background={!email ? 'rgba(255,203,218,-0.53)' : '#fff'} />
+                    <Input required={true} value={email} email={email} onChange={setEmail} background={!email ? 'rgba(255,203,218,-0.53)' : '#fff'} />
 
                 </EmailRequired>
         {
@@ -238,11 +331,11 @@ function App() {
         <Subtitle>
             Mobile
         </Subtitle>
-        <Input onChange={setMobile}/>
+        <Input onChange={setMobile} value={mobile}/>
         <Subtitle2>
             Website
         </Subtitle2>
-        <Input onChange={setWebsite}/>
+        <Input onChange={setWebsite} value={website}/>
         </CompanyDetails>
         <Title>
             Company Addresses
@@ -253,27 +346,27 @@ function App() {
         <Subtitle>
             Attention
         </Subtitle>
-        <Input onChange={setAttention}/>
+        <Input onChange={setAttention} value={attention}/>
         <Subtitle2>
             Address
         </Subtitle2>
-        <Input placeholder={'Address Line 1'} onChange={setAddressLine1}/>
-        <Input placeholder={'Address Line 2'} onChange={setAddressLine2}/>
+        <Input placeholder={'Address Line 1'} onChange={setAddressLine1} value={addressLine1}/>
+        <Input placeholder={'Address Line 2'} onChange={setAddressLine2} value={addressLine2}/>
         <ContactInputsWrapper>
             <InputWrapper>
-                <Input placeholder={'City'} onChange={setCity}/>
+                <Input placeholder={'City'} onChange={setCity} value={city}/>
             </InputWrapper>
                 <Space/>
             <InputWrapper>
-                <Input placeholder={'State / Province / Region'} onChange={setState}/>
+                <Input placeholder={'State / Province / Region'} onChange={setState} value={state}/>
             </InputWrapper>
             <Space/>
             <InputWrapper>
-                <Input placeholder={'Portal / Zip Code'} onChange={setPortal}/>
+                <Input placeholder={'Portal / Zip Code'} onChange={setPortal} value={portal}/>
             </InputWrapper>
             <Space/>
             <InputWrapper ref={countryRef}>
-                <SelectCountryPostal countryOpen={countryOpen} setCountryOpen={setCountryOpen} setSelectedCountryPostal={setSelectedCountryPostal}/>
+                <SelectCountryPostal countryOpen={countryOpen} selectedCountryPostal={selectedCountryPostal} setCountryOpen={setCountryOpen} setSelectedCountryPostal={setSelectedCountryPostal}/>
             </InputWrapper>
         </ContactInputsWrapper>
 
@@ -282,9 +375,10 @@ function App() {
         </Title>
 
         <div style={{display: 'flex', alignItems: 'center', width: '250px'}}  onClick={toggleAddress}>
-            <input type="checkbox" id={'checkbox'} checked={sameAddress}  name="same"  style={{maxWidth: '100%', width: 'unset'}}/>
+            <input type="checkbox" id={'checkbox'} checked={sameAddress}   name="same"  style={{maxWidth: '100%', width: 'unset'}}/>
             <div style={{whiteSpace: 'nowrap', padding: '0px 10px', fontSize: '12px', fontFamily: 'Verdana, sans-serif'}} >Same as postal address</div>
         </div><br/>
+
         <TransitionGroup>
             <CSSTransition
                 timeout={300}
@@ -295,26 +389,30 @@ function App() {
         {
             sameAddress === false && (
                 <>
+                    <Subtitle>
+                        Attention
+                    </Subtitle>
+                    <Input onChange={setAttentionStreet} value={attentionStreet}/>
                 <Subtitle2>
                 Address
             </Subtitle2>
-            <Input placeholder={'Address Line 1'} onChange={setAddressLineStreet1}/>
-            <Input placeholder={'Address Line 2'} onChange={setAddressLineStreet2}/>
+            <Input placeholder={'Address Line 1'} onChange={setAddressLineStreet1} value={addressLineStreet1}/>
+            <Input placeholder={'Address Line 2'} onChange={setAddressLineStreet2} value={addressLineStreet2}/>
             <ContactInputsWrapper>
             <InputWrapper>
-            <Input placeholder={'City'} onChange={setCityStreet}/>
+            <Input placeholder={'City'} onChange={setCityStreet} value={cityStreet}/>
             </InputWrapper>
             <Space/>
             <InputWrapper>
-            <Input placeholder={'State / Province / Region'} onChange={setStateStreet}/>
+            <Input placeholder={'State / Province / Region'} onChange={setStateStreet} value={stateStreet}/>
             </InputWrapper>
             <Space/>
             <InputWrapper>
-            <Input placeholder={'Portal / Zip Code'} onChange={setPortalStreet}/>
+            <Input placeholder={'Portal / Zip Code'} onChange={setPortalStreet} value={portalStreet}/>
             </InputWrapper>
             <Space/>
             <InputWrapper ref={countryStreetRef}>
-            <SelectCountryStreet countryOpen={countryStreetOpen} setCountryOpen={setCountryStreetOpen} setSelectedCountryStreet={setSelectedCountryStreet}/>
+            <SelectCountryStreet countryOpen={countryStreetOpen} selectedCountryStreet={selectedCountryStreet} setCountryOpen={setCountryStreetOpen} setSelectedCountryStreet={setSelectedCountryStreet}/>
             </InputWrapper>
             </ContactInputsWrapper>
                 </>
@@ -330,12 +428,12 @@ function App() {
         <Subtitle>
             VAT Number
         </Subtitle>
-        <Input onChange={setVATNumber}/>
+        <Input onChange={setVATNumber} value={VATNumber}/>
         <div style={{paddingBottom: '20px'}}>
         <Subtitle2>
             Business Registration Number
         </Subtitle2>
-        <Input onChange={setRegistrationNumber}/>
+        <Input onChange={setRegistrationNumber} value={registrationNumber}/>
         </div>
 
     <RequiredButtons  radio={Boolean(!radio && submitPressed)}>
@@ -344,12 +442,12 @@ function App() {
         </SubtitleRequired>
         <RadioButtonsWrapp>
             <Label>
-                <input style={{width: 'unset'}} type="radio" name="order" value="no" onChange={(e) => handleChangeRadio(e, 'No')}/>
+                <input style={{width: 'unset'}} type="radio" name="order" checked={radio === 'no'} value={radio} onChange={(e) => handleChangeRadio(e, 'No')}/>
                    <div style={{padding: '0 7px'}}>No</div>
             </Label>
                 <br/>
             <Label>
-                <input type="radio" style={{width: 'unset'}} name="order" value="yes"  onChange={(e) => handleChangeRadio(e, 'Yes')}/>
+                <input type="radio" style={{width: 'unset'}} name="order" checked={radio === 'yes'} value={radio}  onChange={(e) => handleChangeRadio(e, 'Yes')}/>
                 <div style={{padding: '0 7px'}}>Yes</div>
             </Label><br/>
     </RadioButtonsWrapp>
@@ -366,28 +464,72 @@ function App() {
 
         <ButtonsWrapper>
             <ButtonSubmit onClick={handleSubmit} >
-                <CSSTransition
-                    classNames="settings"
-                    timeout={300}
-                >
-                    <div className='settings-active' style={{height: '15px'}}>
-                        {/*<Settings/>*/}
-                    </div>
-                </CSSTransition>
-                Submit
+                {
+                    isLoadingSubmit ? (
+                        <CSSTransition
+                            classNames="settings"
+                            timeout={300}
+                        >
+                            <div className='settings-active' style={{height: '15px'}}>
+                                <Settings/>
+                            </div>
+                        </CSSTransition>
+                    ) : (
+                        <Save>
+                            Submit
+                        </Save>
+                    )
+                }
             </ButtonSubmit>
-            <ButtonSave >
-                {/*Save*/}
-                <CSSTransition
-                    classNames="settings"
-                    timeout={300}
-                >
-                    <div className='settings-active' style={{height: '15px'}}>
-                      <Settings/>
-                    </div>
-                </CSSTransition>
+            <ButtonSave onClick={handleSaveProgress} >
+                {
+                    isLoadingSave ? (
+                        <CSSTransition
+                            classNames="settings"
+                            timeout={300}
+                        >
+                            <div className='settings-active' style={{height: '15px'}}>
+                                <Settings/>
+                            </div>
+                        </CSSTransition>
+                    ) : (
+                        <Save>
+                            Save
+                        </Save>
+                    )
+                }
             </ButtonSave>
         </ButtonsWrapper>
+        <MyToast
+            isActive={sendSuccess}
+            text={'Data was saved successfully'}
+            style={{
+                maxWidth: '520px',
+                width: 'calc(100% - 32px)',
+                position: 'fixed',
+            }}
+            bottom={86}
+            padding={16}
+            autoClose={2000}
+            hide={toggleIsSendSuccess}
+        />
+        <MyToast
+            isActive={warningSend}
+            text={'Please fill required fields'}
+            style={{
+                maxWidth: '520px',
+                width: 'calc(100% - 32px)',
+                position: 'fixed',
+            }}
+            bottom={86}
+            padding={16}
+            error={isError}
+            autoClose={2000}
+            hide={toggleWarning}
+        />
+        {
+            modal && ( <SaveModal modalRef={modalRef} value={`https://react-cloudflare-4yy.pages.dev/${idResponse}`}  setModal={setModal}/>)
+        }
     </Wrapper>
   );
 }
@@ -419,6 +561,11 @@ const WarningEmail = styled.div`
   background-color: hsl(2, 70%, 47%);
   font-size: 10px;
   font-family: 'Verdana',sans-serif;
+`
+
+const Save = styled.div`
+  font-family: 'Verdana',sans-serif;
+  font-size: 12px;
 `
 
 const WarningText = styled.div`

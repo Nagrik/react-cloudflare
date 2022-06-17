@@ -5,16 +5,18 @@ import ArrowUpIcon from "../assets/Icons/ArrowUpIcon";
 import ArrowDownIcon from "../assets/Icons/ArrowDownIcon";
 import useOnClickOutside from "../utils/useOnClickOutside";
 import search from "../utils/search";
+import {Input} from "../utils/Input";
 
-const SelectCountryPostal = ({countryOpen, setCountryOpen, setSelectedCountryPostal}) => {
+const SelectCountryPostal = ({countryOpen, setCountryOpen, setSelectedCountryPostal, selectedCountryPostal}) => {
     const [country, setCountry] = useState(null)
     const [inputValue, setInputValue] = useState('')
     const [selectedCountry, setSelectedCountry] = useState(false)
     const [inputActive, setInputActive] = useState(false)
+    const [searchOpen, setSearchOpen] = useState(false)
 
 
 
-    const searchItems = search(countryList().data, inputValue, ({ label }) => label);
+    const searchItems = search(countryList().data, country, ({ label }) => label);
 
     const handleOpenCountry = () => {
         setCountryOpen(!countryOpen)
@@ -36,40 +38,34 @@ const SelectCountryPostal = ({countryOpen, setCountryOpen, setSelectedCountryPos
     const handleKeyDown = (event) => {
     }
     const handleCountryChange = (country) => {
-        setCountry(country.label)
-        setSelectedCountryPostal(country.label)
         setCountryOpen(false)
-        setInputValue('')
+        setSelectedCountryPostal(country.label)
+        setSearchOpen(false)
     }
 
     const handleOpenPopup = () => {
+        setSelectedCountryPostal(null)
+        setCountry('')
         if(!inputValue){
             setCountryOpen(true)
         }
         setInputActive(true)
     }
 
-    const handleInputChange = (event) => {
-        setInputValue(event.target.value)
-        if( regex.test(event.key) && countryOpen ) {
-            setCountryOpen(false)
-        }
-        setCountry(null)
-    }
+    // const handleInputChange = (event) => {
+    //     setInputValue(event.target.value)
+    //     if( regex.test(event.key) && countryOpen ) {
+    //         setCountryOpen(false)
+    //     }
+    //     setCountry(null)
+    // }
 
-    const abc = countryList().data.filter((item) => {
-        if(item.label === country){
-            // return console.log(country)
-        }else{
-            return null
-        }
-    })
+
 
     useEffect(() => {
         if(country){
-            setSelectedCountry(true)
-        }else{
-            setSelectedCountry(false)
+            setCountryOpen(false)
+            setSearchOpen(true)
         }
     }, [country])
 
@@ -78,12 +74,12 @@ const SelectCountryPostal = ({countryOpen, setCountryOpen, setSelectedCountryPos
         >
             <div ref={inputRef} style={{width: '100%', display: 'flex', alignItems: 'center'}}>
                 <div onClick={handleOpenPopup} style={{width: '100%'}}>
-                    <SelectElement
-                        placeholder={country ? country : 'Cоuntry'}
-                        onChange={(e) => handleInputChange(e)}
-                        value={inputValue}
+                    <Input
+                        placeholder={selectedCountryPostal ? selectedCountryPostal : 'Cоuntry'}
+                        onChange={(e) => setCountry(e.target.value)}
                         type={'text'}
-                        selectedCountry={selectedCountry}
+                        value={selectedCountryPostal ? selectedCountryPostal : country}
+                        selectedCountry={selectedCountryPostal}
                     />
                 </div>
                 {
@@ -114,11 +110,11 @@ const SelectCountryPostal = ({countryOpen, setCountryOpen, setSelectedCountryPos
                 )
             }
             {
-                inputValue && !country && (
+                searchOpen && (
                     <SearchWrapper>
                         {
-                            searchItems.map((country) => (
-                                <SearchWrapperItem onClick={() => handleCountryChange(country)}>
+                            searchItems.map((country, i) => (
+                                <SearchWrapperItem onClick={() => handleCountryChange(country)} key={i}>
                                     {country.label}
                                 </SearchWrapperItem>
                             ))
@@ -144,7 +140,6 @@ export default SelectCountryPostal;
 
 const InputWrapper = styled.div`
   width: 100%;
-  padding: 6px 0;
   display: flex;
   align-items: center;
   position: relative;

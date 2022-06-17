@@ -5,18 +5,25 @@ import ArrowUpIcon from "../assets/Icons/ArrowUpIcon";
 import ArrowDownIcon from "../assets/Icons/ArrowDownIcon";
 import useOnClickOutside from "../utils/useOnClickOutside";
 import search from "../utils/search";
+import useInput from "../utils/useInput";
+import {Input} from "../utils/Input";
 
-const SelectCountryStreet = ({countryOpen, setCountryOpen, setSelectedCountryStreet}) => {
+const SelectCountryStreet = ({countryOpen, setCountryOpen,selectedCountryStreet, setSelectedCountryStreet}) => {
     const [country, setCountry] = useState(null)
     const [inputValue, setInputValue] = useState('')
     const [selectedCountry, setSelectedCountry] = useState(false)
     const [inputActive, setInputActive] = useState(false)
+    const [searchOpen, setSearchOpen] = useState(false)
 
-    const searchItems = search(countryList().data, inputValue, ({ label }) => label);
+    const searchItems = search(countryList().data, country, ({ label }) => label);
 
     const handleOpenCountry = () => {
         setCountryOpen(!countryOpen)
     }
+
+   // if(country !== ''){
+   //     setCountryOpen(false)
+   // }
 
     const inputRef = useOnClickOutside(() => {
         setInputActive(false)
@@ -24,63 +31,48 @@ const SelectCountryStreet = ({countryOpen, setCountryOpen, setSelectedCountryStr
 
 
 
-
-
-    useEffect(() => {
-        document.addEventListener("keydown", handleKeyDown);
-    }, [])
-
-    const regex = /^[A-Za-z]+$/;
-    const handleKeyDown = (event) => {
-    }
     const handleCountryChange = (country) => {
-        setCountry(country.label)
         setCountryOpen(false)
-        setInputValue('')
+        setSelectedCountryStreet(country.label)
+        setSearchOpen(false)
     }
-
     const handleOpenPopup = () => {
+        setSelectedCountryStreet(null)
+        setCountry('')
         if(!inputValue){
             setCountryOpen(true)
         }
         setInputActive(true)
     }
 
-    const handleInputChange = (event) => {
-        setInputValue(event.target.value)
-        if( regex.test(event.key) && countryOpen ) {
-            setCountryOpen(false)
-        }
-        setCountry(null)
+    // const handleInputChange = (event) => {
+    //     setInputValue(event.target.value)
+    //     if( regex.test(event.key) && countryOpen ) {
+    //         setCountryOpen(false)
+    //     }
+    //     setCountry(null)
+    // }
+
+useEffect(() => {
+    if(country){
+        setCountryOpen(false)
+        setSearchOpen(true)
     }
+}, [country])
 
-    const abc = countryList().data.filter((item) => {
-        if(item.label === country){
-            // return console.log(country)
-        }else{
-            return null
-        }
-    })
 
-    useEffect(() => {
-        if(country){
-            setSelectedCountry(true)
-        }else{
-            setSelectedCountry(false)
-        }
-    }, [country])
 
     return (
         <InputWrapper
         >
             <div ref={inputRef} style={{width: '100%', display: 'flex', alignItems: 'center'}}>
                 <div onClick={handleOpenPopup} style={{width: '100%'}}>
-                    <SelectElement
-                        placeholder={country ? country : 'Cоuntry'}
-                        onChange={(e) => handleInputChange(e)}
-                        value={inputValue}
+                    <Input
+                        placeholder={selectedCountryStreet ? selectedCountryStreet : 'Cоuntry'}
+                        onChange={(e) => setCountry(e.target.value)}
                         type={'text'}
-                        selectedCountry={selectedCountry}
+                        value={selectedCountryStreet ? selectedCountryStreet : country}
+                        selectedCountry={selectedCountryStreet}
                     />
                 </div>
                 {
@@ -111,11 +103,11 @@ const SelectCountryStreet = ({countryOpen, setCountryOpen, setSelectedCountryStr
                 )
             }
             {
-                inputValue && !country && (
+                searchOpen && (
                     <SearchWrapper>
                         {
-                            searchItems.map((country) => (
-                                <SearchWrapperItem onClick={() => handleCountryChange(country)}>
+                            searchItems.map((country, i) => (
+                                <SearchWrapperItem onClick={() => handleCountryChange(country)} key={i}>
                                     {country.label}
                                 </SearchWrapperItem>
                             ))
@@ -141,7 +133,6 @@ export default SelectCountryStreet;
 
 const InputWrapper = styled.div`
   width: 100%;
-  padding: 6px 0;
   display: flex;
   align-items: center;
   position: relative;

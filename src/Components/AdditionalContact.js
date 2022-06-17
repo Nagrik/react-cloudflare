@@ -82,6 +82,7 @@ const AdditionalContact = ({contactNumber, setCountContact, countContact, handle
                         placeholder={'Last'}
                         additional={'#e9e7e7'}
                         index={item.id}
+                        value={item.lastName}
                         countContact={countContact}
                         onChange={(e) => handleChangeSecondName(e, item.id)}
                     />
@@ -93,13 +94,14 @@ const AdditionalContact = ({contactNumber, setCountContact, countContact, handle
                 <Input
                     additional={'#e9e7e7'}
                     index={item.id}
+                    value={item.email}
                     countContact={countContact}
                     onChange={(e) => handleChangeEmail(e, item.id)}
                 />
             </FormWrapp>
             <label className="container" style={{fontFamily: 'Verdana, sans-serif', fontSize: '12px'}}>
                 Include in billing emails
-                <input type="checkbox"  onChange={(e) => handleChangeCheckBox(e, item.id)}/>
+                <input type="checkbox" checked={item.includeEmails}  onChange={(e) => handleChangeCheckBox(e, item.id)}/>
                     <span className="checkmark"></span>
             </label>
         </Wrapper>
