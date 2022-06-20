@@ -172,13 +172,20 @@ function App() {
         if(!email || !radio){
         setIsError(true)
         toggleWarning(true)
-        }else{
+        }else if(location === ''){
             setIsLoadingSubmit(true)
            axios.post('https://worker-typescript-template.nahryshko.workers.dev/api/form', body).then((response) => {
                setIsLoadingSubmit(false)
                toggleIsSendSuccess(true)
            })
            setIsError(false)
+        }else{
+            setIsLoadingSubmit(true)
+            axios.post(`https://worker-typescript-template.nahryshko.workers.dev/api/form/${location}`, body).then((response) => {
+                setIsLoadingSubmit(false)
+                toggleIsSendSuccess(true)
+            })
+            setIsError(false)
         }
     }
 
@@ -529,7 +536,13 @@ function App() {
             hide={toggleWarning}
         />
         {
-            modal && ( <SaveModal modalRef={modalRef} value={`https://react-cloudflare-4yy.pages.dev/${idResponse}`}  setModal={setModal}/>)
+            modal && (
+                <GlobalWrapper>
+                    <WrapperModal ref={modalRef}>
+                        <SaveModal location={location} id={idResponse} value={`https://react-cloudflare-4yy.pages.dev/${idResponse}`}  setModal={setModal}/>
+                    </WrapperModal>
+                </GlobalWrapper>
+            )
         }
     </Wrapper>
   );
@@ -537,6 +550,26 @@ function App() {
 
 export default App;
 
+
+const GlobalWrapper = styled.div`
+  min-height: 100%;
+  min-width: 100%;
+  left: 0;
+  top: 0;
+  background: rgba(0, 0, 0, 0.4);
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+
+const WrapperModal = styled.div`
+  max-width: 467px;
+  height: 267px;
+  background-color: white;
+  position: relative;
+  padding: 0px 37px 37px 37px;
+`
 
 const Wrapper = styled.div`
   margin-bottom: 30px;

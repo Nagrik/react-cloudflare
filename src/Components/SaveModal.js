@@ -4,17 +4,24 @@ import CloseIcon from "../assets/Icons/CloseIcon";
 import {Input} from "../utils/Input";
 import {InputWrapper} from "../App";
 import useInput from "../utils/useInput";
+import axios from "axios";
 
-const SaveModal = ({value, modalRef, setModal}) => {
+const SaveModal = ({value,location, setModal, id}) => {
 
     const handleClickButton = () => {
-        console.log('123')
+        const body = {
+            email, id
+        }
+        if(location === ''){
+            axios.post('https://worker-typescript-template.nahryshko.workers.dev/api/form', body)
+        }else{
+            axios.post(`https://worker-typescript-template.nahryshko.workers.dev/api/form/${location}`, body)
+        }
     }
 
     const [email, setEmail] = useInput(null)
     return (
-        <GlobalWrapper>
-            <Wrapper >
+            <div >
                 <CloseIconWrapper onClick={() => setModal(false)}>
                     <CloseIcon/>
                 </CloseIconWrapper>
@@ -41,20 +48,13 @@ const SaveModal = ({value, modalRef, setModal}) => {
                     Send
                 </Button>
                 </InputWithButton>
-            </Wrapper>
-        </GlobalWrapper>
+            </div>
     );
 };
 
 export default SaveModal;
 
-const Wrapper = styled.div`
-  max-width: 467px;
-  height: 267px;
-  background-color: white;
-  position: relative;
-  padding: 0px 37px 37px 37px;
-`
+
 
 const Button = styled.button`
   display: flex;
@@ -116,14 +116,3 @@ const CloseIconWrapper = styled.div`
   cursor: pointer;
 `
 
-const GlobalWrapper = styled.div`
-  min-height: 100%;
-  min-width: 100%;
-  left: 0;
-  top: 0;
-  background: rgba(0, 0, 0, 0.4);
-  position: fixed;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
