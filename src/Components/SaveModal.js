@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import styled from "styled-components";
 import CloseIcon from "../assets/Icons/CloseIcon";
 import {Input} from "../utils/Input";
@@ -6,9 +6,12 @@ import {InputWrapper} from "../App";
 import useInput from "../utils/useInput";
 import axios from "axios";
 
-const SaveModal = ({value,location, setModal, id}) => {
+const SaveModal = ({value,location, toggleSended, setModal, id}) => {
     const [email, setEmail] = useInput(null)
     const [access_token, setAccessToken] = useInput(null)
+
+
+
 
     const refresh_token = '1//0cDMymqxuckObCgYIARAAGAwSNwF-L9IrN7QFXLmcAwIpLcJUhqOYcyr7xzYiBZtwxAe6EEWFyGQdrQ7yF7UJ_4QC1tzachpbxcw'
     const client_secret = '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'
@@ -26,6 +29,13 @@ const SaveModal = ({value,location, setModal, id}) => {
         }
     }
 
+    const handleGetAccessToken = () => {
+        axios.post('https://oauth2.googleapis.com/token', params, config).then(r => {
+            setAccessToken(r.data.access_token)
+        })
+    }
+
+
     const text = `From: Roman Nahryshko <lunaxodd@gmail.com> 
 To: <${email}> 
 Subject: Saying Hello 
@@ -36,14 +46,15 @@ This is a link to continue filling out the form: https://react-cloudflare-4yy.pa
 `
     const enctyptedText = window.btoa(text);
 
-    const handleGetAccessToken = () => {
-        axios.post('https://oauth2.googleapis.com/token', params, config).then(r => {
-            setAccessToken(r.data.access_token)
-        })
-    }
-    const handleClickButton = () => {
 
-        if(access_token !== null){
+
+    useEffect(() => {
+        handleGetAccessToken()
+    }, [])
+
+    console.log(access_token)
+
+    const handleClickButton = () => {
             axios.post('https://gmail.googleapis.com/gmail/v1/users/lunaxodd%40gmail.com/messages/send?key=AIzaSyAtPoCSY-ZLzE66L_-5USYOmVHs8Rl2t_o', {
                 "raw": enctyptedText
             }, {
@@ -52,14 +63,9 @@ This is a link to continue filling out the form: https://react-cloudflare-4yy.pa
                     'Accept': 'application/json',
                     'Authorization': 'Bearer ' + access_token
                 }
-            }).then(r => {
-                if(r.status !== 200){
-                    handleGetAccessToken()
-                    handleClickButton()
-                }
             })
-        }
-
+        setModal(false)
+        toggleSended(true)
     }
 
     return (

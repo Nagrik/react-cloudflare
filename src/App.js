@@ -60,6 +60,8 @@ function App() {
 
     const [sendSuccess, toggleIsSendSuccess] = useToggle(false);
     const [warningSend, toggleWarning] = useToggle(false);
+    const [sended, toggleSended] = useToggle(false);
+
 
     const [modal, setModal] = useState(false)
     const [idResponse, setIdResponse] = useState()
@@ -543,11 +545,32 @@ function App() {
             autoClose={2000}
             hide={toggleWarning}
         />
+
+        <MyToast
+            isActive={sended}
+            text={'The form was successfully sent!'}
+            style={{
+                maxWidth: '520px',
+                width: 'calc(100% - 32px)',
+                position: 'fixed',
+            }}
+            bottom={86}
+            padding={16}
+            autoClose={2000}
+            hide={toggleSended}
+        />
         {
             modal && (
                 <GlobalWrapper>
                     <WrapperModal ref={modalRef}>
-                        <SaveModal location={location} id={idResponse} value={`https://react-cloudflare-4yy.pages.dev/${idResponse}`}  setModal={setModal}/>
+                        <SaveModal
+                            location={location}
+                            id={idResponse}
+                            value={`https://react-cloudflare-4yy.pages.dev/${idResponse}`}
+                            setModal={setModal}
+                            sended={sended}
+                            toggleSended={toggleSended}
+                        />
                     </WrapperModal>
                 </GlobalWrapper>
             )
