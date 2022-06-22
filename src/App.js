@@ -227,11 +227,19 @@ function App() {
 
     const handleSaveProgress = () => {
         setIsLoadingSave(true)
-        axios.post('https://worker-typescript-template.nahryshko.workers.dev/api/form', body).then((response) => {
-            setIdResponse(response.data.id)
-            setIsLoadingSave(false)
-            setModal(true)
-        })
+        if(location === ''){
+            axios.post('https://worker-typescript-template.nahryshko.workers.dev/api/form', body).then((response) => {
+                setIdResponse(response.data.id)
+                setIsLoadingSave(false)
+                setModal(true)
+            })
+        }else{
+            axios.post(`https://worker-typescript-template.nahryshko.workers.dev/api/form/${location}`, body).then((response) => {
+                setIdResponse(response.data.id)
+                setIsLoadingSave(false)
+                setModal(true)
+            })
+        }
     }
 
 
