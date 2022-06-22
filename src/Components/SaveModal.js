@@ -38,7 +38,7 @@ const SaveModal = ({value,location, toggleSended, setModal, id}) => {
 
     const text = `From: Roman Nahryshko <lunaxodd@gmail.com> 
 To: <${email}> 
-Subject: Saying Hello 
+Subject: Saved form 
 Date: Tue, 22 Jun 2022 13:40:00 -0200 
 Message-ID: <1234@local.machine.example>
 
