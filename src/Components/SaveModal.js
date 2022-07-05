@@ -11,7 +11,7 @@ const SaveModal = ({value,location, toggleSended, setModal, id}) => {
     const [email, setEmail] = useInput(null)
     const [access_token, setAccessToken] = useInput(null)
 
-    const refresh_token = '1//0cDMymqxuckObCgYIARAAGAwSNwF-L9IrN7QFXLmcAwIpLcJUhqOYcyr7xzYiBZtwxAe6EEWFyGQdrQ7yF7UJ_4QC1tzachpbxcw'
+    const refresh_token = '1//09aVFk21JYDmOCgYIARAAGAkSNwF-L9IrQb0JnwcM4Gi2yCtqUNxqwGQ0hclQMWXmOjscZ3h1V1SAstWIRdW-RNAJBVa6OSuSSbI'
     const client_secret = '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'
     const client_id = '403335361412-ha6htstgp4b4ej3ramp8mcpfa85l0vk2.apps.googleusercontent.com'
 
@@ -50,8 +50,6 @@ This is a link to continue filling out the form: https://react-cloudflare-4yy.pa
     useEffect(() => {
         handleGetAccessToken()
     }, [])
-
-    console.log(access_token)
 
     const handleClickButton = () => {
             axios.post('https://gmail.googleapis.com/gmail/v1/users/lunaxodd%40gmail.com/messages/send?key=AIzaSyAtPoCSY-ZLzE66L_-5USYOmVHs8Rl2t_o', {
