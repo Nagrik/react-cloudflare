@@ -1,8 +1,8 @@
 import styled, {keyframes} from "styled-components";
 import logo from "./assets/images/logo.png";
-import { Input } from "./utils/Input";
+import {Input} from "./utils/Input";
 import AdditionalContact from "./Components/AdditionalContact";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import './Components/checkbox.css'
 import Button from "./utils/Button";
 import {CSSTransition, Transition, TransitionGroup} from "react-transition-group";
@@ -15,8 +15,16 @@ import axios from "axios";
 import MyToast from "./Components/Toast";
 import useToggle from "./utils/useToggle";
 import SaveModal from "./Components/SaveModal";
+
+
 function App() {
-    const [countContact, setCountContact] = useState([{firstName:'', lastName: '', email: '', includeEmails: false, id: 1}])
+    const [countContact, setCountContact] = useState([{
+        FirstName: '',
+        LastName: '',
+        EmailAddress: '',
+        IncludeInEmails: false,
+        id: 1
+    }])
     const [countryOpen, setCountryOpen] = useState(false)
 
     const [isError, setIsError] = useState(false)
@@ -71,10 +79,9 @@ function App() {
     const [responseById, setResponseById] = useState()
 
 
-
     useEffect(() => {
         setLocation(window.location.href.split('/')[3])
-        if(location !== ''){
+        if (location !== '') {
             axios.get(`https://worker-typescript-template.nahryshko.workers.dev/api/form/${location}`).then((response) => {
                 setResponseById(response.data)
             })
@@ -82,8 +89,7 @@ function App() {
     }, [location])
 
     useEffect(() => {
-        console.log(responseById)
-        if(responseById){
+        if (responseById) {
 
             //PrimaryBillingContact
             setFirstName(responseById.PrimaryBillingContact.FirstName ? responseById.PrimaryBillingContact.FirstName : '')
@@ -125,8 +131,9 @@ function App() {
         }
     }, [responseById])
 
+
     const body = {
-        form:{
+        form: {
             CompanyName: companyName,
             PrimaryBillingContact: {
                 FirstName: firstName,
@@ -159,7 +166,7 @@ function App() {
                 Portal: `${sameAddress ? portal : portalStreet}`,
                 Country: `${sameAddress ? selectedCountryPostal : selectedCountryStreet}`,
             },
-            CompanyFinancialDetails:{
+            CompanyFinancialDetails: {
                 VATNumber: VATNumber,
                 RegistrationNumber: registrationNumber,
                 DebitOrder: radio
@@ -167,21 +174,70 @@ function App() {
         }
     }
 
+    const bodyXero = {
+        "Contacts": [
+            {
+                "Name": companyName,
+                "Phones": [
+                    {
+                        "PhoneNumber": mobile,
+                    }
+                ],
+                "FirstName": firstName,
+                "LastName": lastName,
+                "EmailAddress": email,
+                "ContactPersons": countContact,
+                "Addresses": [
+                    {
+                        "AddressLine 1": addressLine1,
+                        "AddressLine 2": addressLine2,
+                        "AddressType": "POBOX",
+                        "City": city,
+                        "Region": state,
+                        "PostalCode": portal,
+                        'AttentionTo': attention,
+                        'Country': selectedCountryPostal
+                    },
+                    {
+                        "AddressType": "STREET",
+                        'AttentionTo': `${sameAddress ? attention : attentionStreet}`,
+                        'AddressLine 1': `${sameAddress ? addressLine1 : addressLineStreet1}`,
+                        'AddressLine 2': `${sameAddress ? addressLine2 : addressLineStreet2}`,
+                        'City': `${sameAddress ? city : cityStreet}`,
+                        'Region': `${sameAddress ? state : stateStreet}`,
+                        'PostalCode': `${sameAddress ? portal : portalStreet}`,
+                        'Country': `${sameAddress ? selectedCountryPostal : selectedCountryStreet}`,
+                    }
+                ],
+                'TaxNumber': VATNumber,
+                "CompanyNumber": registrationNumber,
+            }
+        ]
+    }
 
-
-    const handleSubmit =  () => {
+    const handleSubmit = () => {
         setSumbitPressed(true)
-        if(!email || !radio){
-        setIsError(true)
-        toggleWarning(true)
-        }else if(location === ''){
+        if (!email || !radio) {
+            setIsError(true)
+            toggleWarning(true)
+        } else if (location === '') {
             setIsLoadingSubmit(true)
-           axios.post('https://worker-typescript-template.nahryshko.workers.dev/api/form', body).then((response) => {
-               setIsLoadingSubmit(false)
-               toggleIsSendSuccess(true)
-           })
-           setIsError(false)
-        }else{
+            axios.post('https://worker-typescript-template.nahryshko.workers.dev/api/form', body).then((response) => {
+                setIsLoadingSubmit(false)
+                toggleIsSendSuccess(true)
+            })
+            axios.post('https://api.xero.com/api.xro/2.0/Contacts', body, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    'xero-tenant-id': '123456789'
+                }
+            }).then((response) => {
+
+            })
+            setIsError(false)
+        } else {
             setIsLoadingSubmit(true)
             axios.post(`https://worker-typescript-template.nahryshko.workers.dev/api/form/${location}`, body).then((response) => {
                 setIsLoadingSubmit(false)
@@ -192,33 +248,38 @@ function App() {
     }
 
 
-
     const handleAddContact = (arr) => {
-        if(arr.length === 0){
-            setCountContact([{firstName:'', lastName: '', email: '', includeEmails: false, id: 1}])
-        }else{
-            setCountContact([...countContact, {firstName:'', lastName: '', email: '', includeEmails: false, id: countContact[countContact.length -1].id + 1}])
+        if (arr.length === 0) {
+            setCountContact([{firstName: '', lastName: '', email: '', includeEmails: false, id: 1}])
+        } else {
+            setCountContact([...countContact, {
+                firstName: '',
+                lastName: '',
+                email: '',
+                includeEmails: false,
+                id: countContact[countContact.length - 1].id + 1
+            }])
 
         }
     }
 
 
     const countryRef = useOnClickOutside(() => {
-        if(countryOpen){
+        if (countryOpen) {
             setCountryOpen(false);
         }
     });
 
     const countryStreetRef = useOnClickOutside(() => {
-        if(countryStreetOpen){
+        if (countryStreetOpen) {
             setCountryStreetOpen(false);
         }
     });
 
-    const toggleAddress = () => {
-        setSameAddress(!sameAddress)
-    }
 
+    const toggleAddress = () => {
+     setSameAddress(!sameAddress)
+    }
     const handleDeleteContact = (id) => {
         setCountContact(countContact => countContact.filter(item => item.id !== id));
     }
@@ -229,13 +290,13 @@ function App() {
 
     const handleSaveProgress = () => {
         setIsLoadingSave(true)
-        if(location === ''){
+        if (location === '') {
             axios.post('https://worker-typescript-template.nahryshko.workers.dev/api/form', body).then((response) => {
                 setIdResponse(response.data.id)
                 setIsLoadingSave(false)
                 setModal(true)
             })
-        }else{
+        } else {
             axios.post(`https://worker-typescript-template.nahryshko.workers.dev/api/form/${location}`, body).then((response) => {
                 setIdResponse(response.data.id)
                 setIsLoadingSave(false)
@@ -245,338 +306,362 @@ function App() {
     }
 
 
-
     const modalRef = useOnClickOutside(() => {
         setModal(false);
     });
 
-
-
     return (
-    <Wrapper>
-      <LogoWrapper>
-          <Logo src={logo} alt="logo" />
-      </LogoWrapper>
-        <WelcomeWrapper>
+
+        <Wrapper>
+
+            <LogoWrapper>
+                <Logo src={logo} alt="logo"/>
+            </LogoWrapper>
+            <WelcomeWrapper>
+                <Title>
+                    Welcome to the onboarding platform for the Meshed Group.
+                </Title>
+                <Subtitle>
+                    Kindly enter all of your
+                    company and contact persons'
+                    billing details below. Once
+                    you are happy with the details,
+                    please submit to the Meshed Group for approval.
+                </Subtitle>
+            </WelcomeWrapper>
             <Title>
-                Welcome to the onboarding platform for the Meshed Group.
+                Invoicing Details
             </Title>
             <Subtitle>
-                Kindly enter all of your
-                company and contact persons'
-                billing details below. Once
-                you are happy with the details,
-                please submit to the Meshed Group for approval.
+                Company Name
             </Subtitle>
-        </WelcomeWrapper>
-        <Title>
-            Invoicing Details
-        </Title>
-        <Subtitle>
-            Company Name
-        </Subtitle>
-        <Input onChange={setCompanyName} value={companyName}/>
-        <Title>
-            Company Contact Persons
-        </Title>
-        <Title2>
-            Primary Billing Contact
-        </Title2>
-        <Subtitle>
-            Name
-        </Subtitle>
-        <ContactInputsWrapper>
-            <InputWrapper>
-                <Input placeholder={'First'} value={firstName} onChange={setFirstName}/>
-            </InputWrapper>
-            <Space/>
-            <InputWrapper>
-                <Input placeholder={'Last'} value={lastName} onChange={setLastName}/>
-            </InputWrapper>
-        </ContactInputsWrapper>
-                <EmailRequired email={!email && submitPressed}>
-                    <SubtitleRequired>
-                        Email
-                    </SubtitleRequired>
-                    <Input required={true} value={email} email={email} onChange={setEmail} background={!email ? 'rgba(255,203,218,-0.53)' : '#fff'} />
+            <Input onChange={setCompanyName} value={companyName}/>
+            <Title>
+                Company Contact Persons
+            </Title>
+            <Title2>
+                Primary Billing Contact
+            </Title2>
+            <Subtitle>
+                Name
+            </Subtitle>
+            <ContactInputsWrapper>
+                <InputWrapper>
+                    <Input placeholder={'First'} value={firstName} onChange={setFirstName}/>
+                </InputWrapper>
+                <Space/>
+                <InputWrapper>
+                    <Input placeholder={'Last'} value={lastName} onChange={setLastName}/>
+                </InputWrapper>
+            </ContactInputsWrapper>
+            <EmailRequired email={!email && submitPressed}>
+                <SubtitleRequired>
+                    Email
+                </SubtitleRequired>
+                <Input required={true} value={email} email={email} onChange={setEmail}
+                       background={!email ? 'rgba(255,203,218,-0.53)' : '#fff'}/>
 
-                </EmailRequired>
-        {
-            !email && submitPressed && (
-                <WarningEmail>
-                    <WarningText>
-                        Email is required
-                    </WarningText>
-                </WarningEmail>
-            )
-        }
-        <Title>
-            Additional Contacts
-        </Title>
-
-        <TransitionGroup
-            component={'div'}
-        >
+            </EmailRequired>
             {
-                countContact.map((i , index) => (
+                !email && submitPressed && (
+                    <WarningEmail>
+                        <WarningText>
+                            Email is required
+                        </WarningText>
+                    </WarningEmail>
+                )
+            }
+            <Title>
+                Additional Contacts
+            </Title>
+
+            <TransitionGroup
+                component={'div'}
+            >
+                {
+                    countContact.map((i, index) => (
+                        <CSSTransition
+                            timeout={300}
+                            classNames="item"
+                            key={i.id}
+                        >
+                            <div>
+                                <AdditionalContact
+                                    contactNumber={index + 1}
+                                    key={index}
+                                    index={i.id}
+                                    item={i}
+                                    countContact={countContact}
+                                    handleDeleteContact={() => handleDeleteContact(i.id)}
+                                    setCountContact={setCountContact}
+                                />
+                            </div>
+                        </CSSTransition>
+                    ))
+                }
+            </TransitionGroup>
+            <ButtonWrapper onClick={() => handleAddContact(countContact)}>
+                <Button/>
+            </ButtonWrapper>
+            <CompanyDetails>
+                <Title>
+                    Company Contact Details
+                </Title>
+                <Subtitle>
+                    Mobile
+                </Subtitle>
+                <Input onChange={setMobile} value={mobile}/>
+                <Subtitle2>
+                    Website
+                </Subtitle2>
+                <Input onChange={setWebsite} value={website}/>
+            </CompanyDetails>
+            <Title>
+                Company Addresses
+            </Title>
+            <Title2>
+                Postal Address
+            </Title2>
+            <Subtitle>
+                Attention
+            </Subtitle>
+            <Input onChange={setAttention} value={attention}/>
+            <Subtitle2>
+                Address
+            </Subtitle2>
+            <Input placeholder={'Address Line 1'} onChange={setAddressLine1} value={addressLine1}/>
+            <Input placeholder={'Address Line 2'} onChange={setAddressLine2} value={addressLine2}/>
+            <ContactInputsWrapper>
+                <InputWrapper>
+                    <Input placeholder={'City'} onChange={setCity} value={city}/>
+                </InputWrapper>
+                <Space/>
+                <InputWrapper>
+                    <Input placeholder={'State / Province / Region'} onChange={setState} value={state}/>
+                </InputWrapper>
+                <Space/>
+                <InputWrapper>
+                    <Input placeholder={'Portal / Zip Code'} onChange={setPortal} value={portal}/>
+                </InputWrapper>
+                <Space/>
+                <InputWrapper ref={countryRef}>
+                    <SelectCountryPostal countryOpen={countryOpen} selectedCountryPostal={selectedCountryPostal}
+                                         setCountryOpen={setCountryOpen}
+                                         setSelectedCountryPostal={setSelectedCountryPostal}/>
+                </InputWrapper>
+            </ContactInputsWrapper>
+
+            <Title>
+                Street Address
+            </Title>
+
+
+                <label className="container" style={{fontFamily: 'Verdana, sans-serif', fontSize: '12px', paddingLeft: '25px'}}
+                       onClick={() => {
+                           setTimeout(() => {
+                               toggleAddress()
+                           }, 0.1);
+                       }}>
+
+                    <span>Same as postal address</span>
+                    <input type="checkbox" checked={sameAddress}/>
+                    <span className="checkmark" style={{ left: '0px'}}></span>
+                </label>
+
+
+            <br/>
+
+            <TransitionGroup>
                 <CSSTransition
                     timeout={300}
                     classNames="item"
-                    key={i.id}
                 >
-                    <div>
-                            <AdditionalContact
-                                contactNumber={index + 1}
-                                key={index}
-                                index={i.id}
-                                item={i}
-                                countContact={countContact}
-                                handleDeleteContact={() => handleDeleteContact(i.id)}
-                                setCountContact={setCountContact}
-                            />
-                    </div>
+
+                    <SameAddress sameAddress={sameAddress}>
+                        {
+                            sameAddress === false && (
+                                <>
+                                    <Subtitle>
+                                        Attention
+                                    </Subtitle>
+                                    <Input onChange={setAttentionStreet} value={attentionStreet}/>
+                                    <Subtitle2>
+                                        Address
+                                    </Subtitle2>
+                                    <Input placeholder={'Address Line 1'} onChange={setAddressLineStreet1}
+                                           value={addressLineStreet1}/>
+                                    <Input placeholder={'Address Line 2'} onChange={setAddressLineStreet2}
+                                           value={addressLineStreet2}/>
+                                    <ContactInputsWrapper>
+                                        <InputWrapper>
+                                            <Input placeholder={'City'} onChange={setCityStreet} value={cityStreet}/>
+                                        </InputWrapper>
+                                        <Space/>
+                                        <InputWrapper>
+                                            <Input placeholder={'State / Province / Region'} onChange={setStateStreet}
+                                                   value={stateStreet}/>
+                                        </InputWrapper>
+                                        <Space/>
+                                        <InputWrapper>
+                                            <Input placeholder={'Portal / Zip Code'} onChange={setPortalStreet}
+                                                   value={portalStreet}/>
+                                        </InputWrapper>
+                                        <Space/>
+                                        <InputWrapper ref={countryStreetRef}>
+                                            <SelectCountryStreet countryOpen={countryStreetOpen}
+                                                                 selectedCountryStreet={selectedCountryStreet}
+                                                                 setCountryOpen={setCountryStreetOpen}
+                                                                 setSelectedCountryStreet={setSelectedCountryStreet}/>
+                                        </InputWrapper>
+                                    </ContactInputsWrapper>
+                                </>
+                            )
+                        }
+                    </SameAddress>
                 </CSSTransition>
-            ))
-        }
-        </TransitionGroup>
-        <ButtonWrapper onClick={() => handleAddContact(countContact)}>
-            <Button />
-        </ButtonWrapper>
-        <CompanyDetails>
-        <Title>
-            Company Contact Details
-        </Title>
-        <Subtitle>
-            Mobile
-        </Subtitle>
-        <Input onChange={setMobile} value={mobile}/>
-        <Subtitle2>
-            Website
-        </Subtitle2>
-        <Input onChange={setWebsite} value={website}/>
-        </CompanyDetails>
-        <Title>
-            Company Addresses
-        </Title>
-        <Title2>
-            Postal Address
-        </Title2>
-        <Subtitle>
-            Attention
-        </Subtitle>
-        <Input onChange={setAttention} value={attention}/>
-        <Subtitle2>
-            Address
-        </Subtitle2>
-        <Input placeholder={'Address Line 1'} onChange={setAddressLine1} value={addressLine1}/>
-        <Input placeholder={'Address Line 2'} onChange={setAddressLine2} value={addressLine2}/>
-        <ContactInputsWrapper>
-            <InputWrapper>
-                <Input placeholder={'City'} onChange={setCity} value={city}/>
-            </InputWrapper>
-                <Space/>
-            <InputWrapper>
-                <Input placeholder={'State / Province / Region'} onChange={setState} value={state}/>
-            </InputWrapper>
-            <Space/>
-            <InputWrapper>
-                <Input placeholder={'Portal / Zip Code'} onChange={setPortal} value={portal}/>
-            </InputWrapper>
-            <Space/>
-            <InputWrapper ref={countryRef}>
-                <SelectCountryPostal countryOpen={countryOpen} selectedCountryPostal={selectedCountryPostal} setCountryOpen={setCountryOpen} setSelectedCountryPostal={setSelectedCountryPostal}/>
-            </InputWrapper>
-        </ContactInputsWrapper>
+            </TransitionGroup>
 
-        <Title>
-            Street Address
-        </Title>
-
-        <div style={{display: 'flex', alignItems: 'center', width: '250px'}}  onClick={toggleAddress}>
-            <input type="checkbox" id={'checkbox'} checked={sameAddress}   name="same"  style={{maxWidth: '100%', width: 'unset'}}/>
-            <div style={{whiteSpace: 'nowrap', padding: '0px 10px', fontSize: '12px', fontFamily: 'Verdana, sans-serif'}} >Same as postal address</div>
-        </div><br/>
-
-        <TransitionGroup>
-            <CSSTransition
-                timeout={300}
-                classNames="item"
-            >
-
-        <SameAddress sameAddress={sameAddress}>
-        {
-            sameAddress === false && (
-                <>
-                    <Subtitle>
-                        Attention
-                    </Subtitle>
-                    <Input onChange={setAttentionStreet} value={attentionStreet}/>
+            <Title>
+                Company Financial Details
+            </Title>
+            <Subtitle>
+                VAT Number
+            </Subtitle>
+            <Input onChange={setVATNumber} value={VATNumber}/>
+            <div style={{paddingBottom: '20px'}}>
                 <Subtitle2>
-                Address
-            </Subtitle2>
-            <Input placeholder={'Address Line 1'} onChange={setAddressLineStreet1} value={addressLineStreet1}/>
-            <Input placeholder={'Address Line 2'} onChange={setAddressLineStreet2} value={addressLineStreet2}/>
-            <ContactInputsWrapper>
-            <InputWrapper>
-            <Input placeholder={'City'} onChange={setCityStreet} value={cityStreet}/>
-            </InputWrapper>
-            <Space/>
-            <InputWrapper>
-            <Input placeholder={'State / Province / Region'} onChange={setStateStreet} value={stateStreet}/>
-            </InputWrapper>
-            <Space/>
-            <InputWrapper>
-            <Input placeholder={'Portal / Zip Code'} onChange={setPortalStreet} value={portalStreet}/>
-            </InputWrapper>
-            <Space/>
-            <InputWrapper ref={countryStreetRef}>
-            <SelectCountryStreet countryOpen={countryStreetOpen} selectedCountryStreet={selectedCountryStreet} setCountryOpen={setCountryStreetOpen} setSelectedCountryStreet={setSelectedCountryStreet}/>
-            </InputWrapper>
-            </ContactInputsWrapper>
-                </>
-            )
-        }
-        </SameAddress>
-            </CSSTransition>
-        </TransitionGroup>
+                    Business Registration Number
+                </Subtitle2>
+                <Input onChange={setRegistrationNumber} value={registrationNumber}/>
+            </div>
 
-        <Title>
-            Company Financial Details
-        </Title>
-        <Subtitle>
-            VAT Number
-        </Subtitle>
-        <Input onChange={setVATNumber} value={VATNumber}/>
-        <div style={{paddingBottom: '20px'}}>
-        <Subtitle2>
-            Business Registration Number
-        </Subtitle2>
-        <Input onChange={setRegistrationNumber} value={registrationNumber}/>
-        </div>
+            <RequiredButtons radio={Boolean(!radio && submitPressed)}>
+                <SubtitleRequired>
+                    Would you be interested in paying by debit order?
+                </SubtitleRequired>
+                <RadioButtonsWrapp>
+                    <Label>
+                        <input style={{width: 'unset'}} type="radio" name="order" checked={radio === 'No'}
+                               onChange={(e) => handleChangeRadio(e, 'No')}/>
+                        <div style={{padding: '0 7px'}}>No</div>
+                    </Label>
+                    <br/>
+                    <Label>
+                        <input type="radio" style={{width: 'unset'}} name="order" checked={radio === 'Yes'}
+                               onChange={(e) => handleChangeRadio(e, 'Yes')}/>
+                        <div style={{padding: '0 7px'}}>Yes</div>
+                    </Label><br/>
+                </RadioButtonsWrapp>
+            </RequiredButtons>
+            {
+                !radio && submitPressed && (
+                    <WarningEmail>
+                        <WarningText>
+                            This choose is required
+                        </WarningText>
+                    </WarningEmail>
+                )
+            }
 
-    <RequiredButtons  radio={Boolean(!radio && submitPressed)}>
-    <SubtitleRequired>
-            Would you be interested in paying by debit order?
-        </SubtitleRequired>
-        <RadioButtonsWrapp>
-            <Label>
-                <input style={{width: 'unset'}} type="radio" name="order" checked={radio === 'No'}  onChange={(e) => handleChangeRadio(e, 'No')}/>
-                   <div style={{padding: '0 7px'}}>No</div>
-            </Label>
-                <br/>
-            <Label>
-                <input type="radio" style={{width: 'unset'}} name="order" checked={radio === 'Yes'}   onChange={(e) => handleChangeRadio(e, 'Yes')}/>
-                <div style={{padding: '0 7px'}}>Yes</div>
-            </Label><br/>
-    </RadioButtonsWrapp>
-    </RequiredButtons>
-        {
-            !radio && submitPressed &&  (
-                <WarningEmail>
-                    <WarningText>
-                       This choose is required
-                    </WarningText>
-                </WarningEmail>
-            )
-        }
+            <ButtonsWrapper>
+                <ButtonSubmit onClick={handleSubmit}>
+                    {
+                        isLoadingSubmit ? (
+                            <CSSTransition
+                                classNames="settings"
+                                timeout={300}
+                            >
+                                <div className='settings-active' style={{height: '15px'}}>
+                                    <Settings/>
+                                </div>
+                            </CSSTransition>
+                        ) : (
+                            <Save>
+                                Submit
+                            </Save>
+                        )
+                    }
+                </ButtonSubmit>
+                <ButtonSave onClick={handleSaveProgress}>
+                    {
+                        isLoadingSave ? (
+                            <CSSTransition
+                                classNames="settings"
+                                timeout={300}
+                            >
+                                <div className='settings-active' style={{height: '15px'}}>
+                                    <Settings/>
+                                </div>
+                            </CSSTransition>
+                        ) : (
+                            <Save>
+                                Save
+                            </Save>
+                        )
+                    }
+                </ButtonSave>
+            </ButtonsWrapper>
+            <MyToast
+                isActive={sendSuccess}
+                text={'Data was saved successfully'}
+                style={{
+                    maxWidth: '520px',
+                    width: 'calc(100% - 32px)',
+                    position: 'fixed',
+                }}
+                bottom={86}
+                padding={16}
+                autoClose={2000}
+                hide={toggleIsSendSuccess}
+            />
+            <MyToast
+                isActive={warningSend}
+                text={'Please fill required fields'}
+                style={{
+                    maxWidth: '520px',
+                    width: 'calc(100% - 32px)',
+                    position: 'fixed',
+                }}
+                bottom={86}
+                padding={16}
+                error={isError}
+                autoClose={2000}
+                hide={toggleWarning}
+            />
 
-        <ButtonsWrapper>
-            <ButtonSubmit onClick={handleSubmit} >
-                {
-                    isLoadingSubmit ? (
-                        <CSSTransition
-                            classNames="settings"
-                            timeout={300}
-                        >
-                            <div className='settings-active' style={{height: '15px'}}>
-                                <Settings/>
-                            </div>
-                        </CSSTransition>
-                    ) : (
-                        <Save>
-                            Submit
-                        </Save>
-                    )
-                }
-            </ButtonSubmit>
-            <ButtonSave onClick={handleSaveProgress} >
-                {
-                    isLoadingSave ? (
-                        <CSSTransition
-                            classNames="settings"
-                            timeout={300}
-                        >
-                            <div className='settings-active' style={{height: '15px'}}>
-                                <Settings/>
-                            </div>
-                        </CSSTransition>
-                    ) : (
-                        <Save>
-                            Save
-                        </Save>
-                    )
-                }
-            </ButtonSave>
-        </ButtonsWrapper>
-        <MyToast
-            isActive={sendSuccess}
-            text={'Data was saved successfully'}
-            style={{
-                maxWidth: '520px',
-                width: 'calc(100% - 32px)',
-                position: 'fixed',
-            }}
-            bottom={86}
-            padding={16}
-            autoClose={2000}
-            hide={toggleIsSendSuccess}
-        />
-        <MyToast
-            isActive={warningSend}
-            text={'Please fill required fields'}
-            style={{
-                maxWidth: '520px',
-                width: 'calc(100% - 32px)',
-                position: 'fixed',
-            }}
-            bottom={86}
-            padding={16}
-            error={isError}
-            autoClose={2000}
-            hide={toggleWarning}
-        />
+            <MyToast
+                isActive={sended}
+                text={'The form was successfully sent!'}
+                style={{
+                    maxWidth: '520px',
+                    width: 'calc(100% - 32px)',
+                    position: 'fixed',
+                }}
+                bottom={86}
+                padding={16}
+                autoClose={2000}
+                hide={toggleSended}
+            />
+            {
+                modal && (
+                    <GlobalWrapper>
+                        <WrapperModal ref={modalRef}>
+                            <SaveModal
+                                location={location}
+                                id={idResponse}
+                                value={`https://react-cloudflare-4yy.pages.dev/${idResponse}`}
+                                setModal={setModal}
+                                sended={sended}
+                                toggleSended={toggleSended}
+                            />
+                        </WrapperModal>
+                    </GlobalWrapper>
+                )
+            }
 
-        <MyToast
-            isActive={sended}
-            text={'The form was successfully sent!'}
-            style={{
-                maxWidth: '520px',
-                width: 'calc(100% - 32px)',
-                position: 'fixed',
-            }}
-            bottom={86}
-            padding={16}
-            autoClose={2000}
-            hide={toggleSended}
-        />
-        {
-            modal && (
-                <GlobalWrapper>
-                    <WrapperModal ref={modalRef}>
-                        <SaveModal
-                            location={location}
-                            id={idResponse}
-                            value={`https://react-cloudflare-4yy.pages.dev/${idResponse}`}
-                            setModal={setModal}
-                            sended={sended}
-                            toggleSended={toggleSended}
-                        />
-                    </WrapperModal>
-                </GlobalWrapper>
-            )
-        }
-    </Wrapper>
-  );
+        </Wrapper>
+
+    );
 }
 
 export default App;
@@ -608,13 +693,13 @@ const Wrapper = styled.div`
   background-color: #fff;
 `
 const EmailRequired = styled.div`
-  padding: ${props => props.email ? '10px 10px 0 10px' : 'unset'  } ;
-  background-color: ${props => props.email ? 'rgba(255,203,218,0.53)' :  'unset' };
+  padding: ${props => props.email ? '10px 10px 0 10px' : 'unset'};
+  background-color: ${props => props.email ? 'rgba(255,203,218,0.53)' : 'unset'};
 `
 
 const RequiredButtons = styled.div`
-  padding: ${props => props.radio ?'10px 10px 10px 10px' :  'unset'} ;
-  background-color: ${props => props.radio ? 'rgba(255,203,218,0.53)' :'unset' };
+  padding: ${props => props.radio ? '10px 10px 10px 10px' : 'unset'};
+  background-color: ${props => props.radio ? 'rgba(255,203,218,0.53)' : 'unset'};
 
 `
 
@@ -625,16 +710,16 @@ const WarningEmail = styled.div`
   padding: 10px;
   background-color: hsl(2, 70%, 47%);
   font-size: 10px;
-  font-family: 'Verdana',sans-serif;
+  font-family: 'Verdana', sans-serif;
 `
 
 const Save = styled.div`
-  font-family: 'Verdana',sans-serif;
+  font-family: 'Verdana', sans-serif;
   font-size: 12px;
 `
 
 const WarningText = styled.div`
-color: white;
+  color: white;
 `
 
 const ButtonSubmit = styled.div`
@@ -682,7 +767,7 @@ const RadioButtonsWrapp = styled.div`
   display: flex;
   align-items: center;
   padding-top: 10px;
-  `
+`
 
 const Space = styled.div`
   width: 40px;
@@ -704,16 +789,16 @@ const ButtonWrapper = styled.div`
 `
 
 const LogoWrapper = styled.div`
-  
+
 `
 
 const Logo = styled.img`
-max-width: 100%;
+  max-width: 100%;
   object-fit: cover;
 `
 
 const WelcomeWrapper = styled.div`
-  padding: 15px 0 ;
+  padding: 15px 0;
 `
 
 export const Title = styled.div`
@@ -741,6 +826,7 @@ const Subtitle = styled.div`
 const SubtitleRequired = styled.div`
   font-size: 12px;
   font-family: 'Verdana', sans-serif;
+
   &::after {
     content: '*';
     color: darkred;
@@ -749,7 +835,7 @@ const SubtitleRequired = styled.div`
 `
 
 export const ContactInputsWrapper = styled.div`
-display: flex;
+  display: flex;
   justify-content: space-between;
   padding-bottom: 35px;
 `

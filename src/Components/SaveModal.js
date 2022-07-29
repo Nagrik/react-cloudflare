@@ -12,8 +12,8 @@ const SaveModal = ({value,location, toggleSended, setModal, id}) => {
     const [access_token, setAccessToken] = useInput(null)
 
     const refresh_token = '1//09aVFk21JYDmOCgYIARAAGAkSNwF-L9IrQb0JnwcM4Gi2yCtqUNxqwGQ0hclQMWXmOjscZ3h1V1SAstWIRdW-RNAJBVa6OSuSSbI'
-    const client_secret = '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'
-    const client_id = '403335361412-ha6htstgp4b4ej3ramp8mcpfa85l0vk2.apps.googleusercontent.com'
+    const client_secret = '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'
+    const client_id = '102125588284-c3dgc8q4v7inrok75od5pblf5g9k9jg5.apps.googleusercontent.com'
 
 
     const params = new URLSearchParams()
@@ -36,7 +36,7 @@ const SaveModal = ({value,location, toggleSended, setModal, id}) => {
     }
 
 
-    const text = `From: Roman Nahryshko <lunaxodd@gmail.com> 
+    const text = `From: Roman Nahryshko <nagrishkoo@gmail.com> 
 To: <${email}> 
 Subject: Saved form 
 Date: Tue, 22 Jun 2022 13:40:00 -0200 
@@ -52,13 +52,13 @@ This is a link to continue filling out the form: https://react-cloudflare-4yy.pa
     }, [])
 
     const handleClickButton = () => {
-            axios.post('https://gmail.googleapis.com/gmail/v1/users/lunaxodd%40gmail.com/messages/send?key=AIzaSyAtPoCSY-ZLzE66L_-5USYOmVHs8Rl2t_o', {
+            axios.post('https://gmail.googleapis.com/gmail/v1/users/nagrishkoo%40gmail.com/messages/send', {
                 "raw": enc
             }, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
-                    'Authorization': 'Bearer ' + access_token
+                    'Authorization': 'Bearer ya29.a0AVA9y1tKU7A304YDhtV0IjoEJ4fwC8h4XOK8l0j7PQZMgulEjJfGjyB3ThJ88yLcZKgM66s2S07HkTs50PiN3Jjp9_2IAYhwGhNKG5rpM1in3soUJox1Fw2ELbNyceQNHK7Kgvh-rPSlYxqlLynGFHrQ5qRUd0FqveIFUdZShVhrMg'
                 }
             })
         setModal(false)

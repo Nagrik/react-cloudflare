@@ -17,7 +17,7 @@ const AdditionalContact = ({contactNumber, setCountContact, countContact, handle
     const body = () => {
         const arr = countContact
         arr.map((itemArr) => itemArr.id === item.id ?
-            {...itemArr, firstName: firstName, lastName: lastName, email: email, includeEmails: includeEmails} : itemArr)
+            {...itemArr, FirstName: firstName, LastName: lastName, EmailAddress: email, IncludeInEmails: includeEmails} : itemArr)
 
         setCountContact(arr);
     }
@@ -100,7 +100,7 @@ const AdditionalContact = ({contactNumber, setCountContact, countContact, handle
                 />
             </FormWrapp>
             <label className="container" style={{fontFamily: 'Verdana, sans-serif', fontSize: '12px'}}>
-                Include in billing emails
+                <span>Include in billing emails</span>
                 <input type="checkbox" checked={item.includeEmails}  onChange={(e) => handleChangeCheckBox(e, item.id)}/>
                     <span className="checkmark"></span>
             </label>
