@@ -54,7 +54,7 @@ const AdditionalContact = ({contactNumber, setCountContact, countContact, handle
     return (
         <Wrapper index={item.id} countContact={countContact} className={'item'}>
             <AdditionalContactWrapper>
-                <IconWrapper onClick={() => handleDeleteContact(item.id)}>
+                <IconWrapper className='hidden' onClick={() => handleDeleteContact(item.id)}>
                     <Close/>
                 </IconWrapper>
             <Title>
@@ -99,7 +99,7 @@ const AdditionalContact = ({contactNumber, setCountContact, countContact, handle
                     onChange={(e) => handleChangeEmail(e, item.id)}
                 />
             </FormWrapp>
-            <label className="container" style={{fontFamily: 'Verdana, sans-serif', fontSize: '12px'}}>
+            <label className="container additional-contact-checkbox" style={{fontFamily: 'Verdana, sans-serif', fontSize: '12px'}}>
                 Include in billing emails
                 <input type="checkbox" checked={item.includeEmails}  onChange={(e) => handleChangeCheckBox(e, item.id)}/>
                     <span className="checkmark"></span>
