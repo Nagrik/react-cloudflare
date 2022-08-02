@@ -17,6 +17,7 @@ import useToggle from "./utils/useToggle";
 import SaveModal from "./Components/SaveModal";
 
 
+
 function App() {
     const [countContact, setCountContact] = useState([{
         FirstName: '',
@@ -132,6 +133,7 @@ function App() {
     }, [responseById])
 
 
+
     const body = {
         form: {
             CompanyName: companyName,
@@ -214,37 +216,44 @@ function App() {
             }
         ]
     }
+    useEffect(() => {
+        axios.post('https://worker-typescript-template.nahryshko.workers.dev/api/xero/refresh').then(res => {
+            console.log(res)
+        })
+    }, [])
+
 
     const handleSubmit = () => {
-        setSumbitPressed(true)
-        if (!email || !radio) {
-            setIsError(true)
-            toggleWarning(true)
-        } else if (location === '') {
-            setIsLoadingSubmit(true)
-            axios.post('https://worker-typescript-template.nahryshko.workers.dev/api/form', body).then((response) => {
-                setIsLoadingSubmit(false)
-                toggleIsSendSuccess(true)
-            })
-            axios.post('https://api.xero.com/api.xro/2.0/Contacts', body, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                    accept: 'application/json',
-                    'Content-Type': 'application/json',
-                    'xero-tenant-id': '123456789'
-                }
-            }).then((response) => {
-
-            })
-            setIsError(false)
-        } else {
-            setIsLoadingSubmit(true)
-            axios.post(`https://worker-typescript-template.nahryshko.workers.dev/api/form/${location}`, body).then((response) => {
-                setIsLoadingSubmit(false)
-                toggleIsSendSuccess(true)
-            })
-            setIsError(false)
-        }
+      axios.post('https://worker-typescript-template.nahryshko.workers.dev/api/xero', bodyXero)
+        // setSumbitPressed(true)
+        // if (!email || !radio) {
+        //     setIsError(true)
+        //     toggleWarning(true)
+        // } else if (location === '') {
+        //     setIsLoadingSubmit(true)
+        //     axios.post('https://worker-typescript-template.nahryshko.workers.dev/api/form', body).then((response) => {
+        //         setIsLoadingSubmit(false)
+        //         toggleIsSendSuccess(true)
+        //     })
+        //     axios.post('https://api.xero.com/api.xro/2.0/Contacts', body, {
+        //         headers: {
+        //             'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        //             accept: 'application/json',
+        //             'Content-Type': 'application/json',
+        //             'xero-tenant-id': '123456789'
+        //         }
+        //     }).then((response) => {
+        //
+        //     })
+        //     setIsError(false)
+        // } else {
+        //     setIsLoadingSubmit(true)
+        //     axios.post(`https://worker-typescript-template.nahryshko.workers.dev/api/form/${location}`, body).then((response) => {
+        //         setIsLoadingSubmit(false)
+        //         toggleIsSendSuccess(true)
+        //     })
+        //     setIsError(false)
+        // }
     }
 
 
