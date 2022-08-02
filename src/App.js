@@ -15,6 +15,67 @@ import axios from "axios";
 import MyToast from "./Components/Toast";
 import useToggle from "./utils/useToggle";
 import SaveModal from "./Components/SaveModal";
+import getCssData from 'get-css-data';
+
+function getHTML(radio, countContact, sameAddress, bodyXero) {
+    const xeroToken = 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjFDQUY4RTY2NzcyRDZEQzAyOEQ2NzI2RkQwMjYxNTgxNTcwRUZDMTkiLCJ0eXAiOiJKV1QiLCJ4NXQiOiJISy1PWm5jdGJjQW8xbkp2MENZVmdWY09fQmsifQ.eyJuYmYiOjE2NTkzNDk5MTAsImV4cCI6MTY1OTM1MTcxMCwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eS54ZXJvLmNvbSIsImF1ZCI6Imh0dHBzOi8vaWRlbnRpdHkueGVyby5jb20vcmVzb3VyY2VzIiwiY2xpZW50X2lkIjoiNUFFRjgxNDc3RTAyNDE4MUI5REUyQTcxNkIyMEE1MkUiLCJzdWIiOiI3Yzg3YjdhMjc0MDM1NTNkOTJiMjIxNWQyYmE0ZGE5NiIsImF1dGhfdGltZSI6MTY1OTM0NTY1MiwieGVyb191c2VyaWQiOiI3ZDhkNGU0OS00ODE5LTQ5MjgtYjQ2OS02NGViODMzNGIwZjYiLCJnbG9iYWxfc2Vzc2lvbl9pZCI6IjI4OWI0NmEzNWU2ODRiMDM4YWIzZDMwYWE2ODE5YzkyIiwianRpIjoiNDc3YjE2ODAzMWQ5NGNhMDE5YjZmOWVlZGNjMmU1NGIiLCJhdXRoZW50aWNhdGlvbl9ldmVudF9pZCI6ImQwMGMxZDYzLWRiY2YtNDI0NS05YzMwLWNlZjE0OGFlOTI3YiIsInNjb3BlIjpbImVtYWlsIiwicHJvZmlsZSIsIm9wZW5pZCIsImFjY291bnRpbmcuc2V0dGluZ3MiLCJhY2NvdW50aW5nLmF0dGFjaG1lbnRzIiwiYWNjb3VudGluZy50cmFuc2FjdGlvbnMiLCJhY2NvdW50aW5nLmNvbnRhY3RzIiwib2ZmbGluZV9hY2Nlc3MiXSwiYW1yIjpbInNzbyJdfQ.RbUHVmB3IBBsX--hYiJeYAVCFNOpnMbwTgVbEMnBpAUoummUSfCdQcBV0UFUSJ8uSqMPFIRDJXnE3RmXlkhBNDeLHsbBvrL22UPFV_zjPyegbMJOp3cXy2G-E5jmngRr7Q_FajBqh8Y1MhX55yOrnDu4DOk56xMWK_kIZws9HkdvVwLMZBPk1cnFMpYWe76tYXO_mWfXshNw9c-0y8nEtismUHFVYoQpS_2GOUgWkHYlbPDOZJfkMJO3q__IvIxLht-OKrJZnNJ1Ud_3m80Qv-hzaAMs-s0rN9IWPQiEUxd6rNixJmc_NP1u-0FyZjrgLIG11yrUxGMwcJwwv8_9Kw'
+    getCssData({
+        onComplete: function(cssText) {
+            const copyHTML = document.createElement('html');
+            const copyHead = document.createElement('head');
+            const copyStyles = document.createElement('style');
+            copyStyles.textContent = cssText;
+            copyHead.appendChild(copyStyles);
+            copyHTML.appendChild(copyHead);
+            const copyBody = document.createElement('body');
+            copyBody.innerHTML = document.getElementById('root').innerHTML
+            copyHTML.appendChild(copyBody);
+            // copyBody.querySelector('#radiobuttons').innerHTML = `<div>${radio}</div>`;
+            // const hiddenElements = copyBody.querySelectorAll('.hidden');
+            // hiddenElements.forEach(element => {
+            //     element.remove();
+            // })
+            // const additionalContacts = copyBody.querySelectorAll('.additional-contact-checkbox');
+            // additionalContacts.forEach((element, index) => {
+            //     element.innerHTML = `<div>Include in billing emails: ${countContact[index].includeEmails ? 'Yes' : 'No'}</div>`;
+            //     element.className = '';
+            //     element.style.margin = '35px 0 0 25px';
+            //     element.style.display = 'block';
+            // })
+            // const sameAddressNode = copyBody.querySelector('.same-address');
+            // sameAddressNode.innerHTML = `<div>Same as postal address: ${sameAddress ? 'Yes' : 'No'}</div>`;
+            // sameAddressNode.style = 'white-space: nowrap; font-size: 12px; font-family: Verdana, sans-serif;'
+            const value = copyHTML.outerHTML;
+            axios.post('https://f2b8-188-163-108-228.ngrok.io', {
+                "string": `${value}`
+            }, {
+                responseType: 'arraybuffer',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/pdf'
+                }
+            }).then(({data}) => {
+                console.log('hello');
+                function _arrayBufferToBase64( buffer ) {
+                    var binary = '';
+                    var bytes = new Uint8Array( buffer );
+                    var len = bytes.byteLength;
+                    for (var i = 0; i < len; i++) {
+                        binary += String.fromCharCode( bytes[ i ] );
+                    }
+                    return window.btoa( binary );
+                }
+                console.log(_arrayBufferToBase64(data));
+                axios.post('https://api.xero.com/api.xro/2.0/Contacts', bodyXero, {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + xeroToken,
+                    'xero-tenant-id': '661cb2c1-3658-47d8-bff0-47c42d275072'
+                })
+            })
+        }
+      });
+}
 
 
 
@@ -133,7 +194,6 @@ function App() {
     }, [responseById])
 
 
-
     const body = {
         form: {
             CompanyName: companyName,
@@ -224,7 +284,7 @@ function App() {
 
 
     const handleSubmit = () => {
-      axios.post('https://worker-typescript-template.nahryshko.workers.dev/api/xero', bodyXero)
+        getHTML(radio, countContact, sameAddress, bodyXero);
         // setSumbitPressed(true)
         // if (!email || !radio) {
         //     setIsError(true)
@@ -243,7 +303,7 @@ function App() {
         //             'xero-tenant-id': '123456789'
         //         }
         //     }).then((response) => {
-        //
+
         //     })
         //     setIsError(false)
         // } else {
