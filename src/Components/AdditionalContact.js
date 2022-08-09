@@ -24,24 +24,24 @@ const AdditionalContact = ({contactNumber, setCountContact, countContact, handle
     // console.log(includeEmails)
     const handleChangeFirstName = (e, id) => {
         const newName = e.target.value
-        const lastArr = countContact.map((i)=> i.id === id ? {...i, firstName: newName} : i)
+        const lastArr = countContact.map((i)=> i.id === id ? {...i, FirstName: newName} : i)
         setCountContact(lastArr);
     }
     const handleChangeSecondName = (e, id) => {
         const newName = e.target.value
-        const lastArr = countContact.map((i)=> i.id === id ? {...i, lastName: newName} : i)
+        const lastArr = countContact.map((i)=> i.id === id ? {...i, LastName: newName} : i)
         setCountContact(lastArr);
         // countContact[id][name] = name;
     }
     const handleChangeEmail = (e, id) => {
         const newName = e.target.value
-        const lastArr = countContact.map((i)=> i.id === id ? {...i, email: newName} : i)
+        const lastArr = countContact.map((i)=> i.id === id ? {...i, EmailAddress: newName} : i)
         setCountContact(lastArr);
     }
 
     const handleChangeCheckBox = (e, id) => {
         const newName = e.target.checked
-        const lastArr = countContact.map((i)=> i.id === id ? {...i, includeEmails: newName} : i)
+        const lastArr = countContact.map((i)=> i.id === id ? {...i, IncludeInEmails: newName} : i)
         setCountContact(lastArr);
     }
     // console.log(countContact, 'count')
