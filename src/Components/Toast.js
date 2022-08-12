@@ -28,7 +28,7 @@ const MyToast = ({
             timeout={autoClose}
             unmountOnExit
         >
-            <CustomToast
+            <CustomToast  className="hidden"
                 style={style}
                 padding={padding}
                 bottom={bottom}

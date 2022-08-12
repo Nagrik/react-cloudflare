@@ -54,7 +54,7 @@ const AdditionalContact = ({contactNumber, setCountContact, countContact, handle
     return (
         <Wrapper index={item.id} countContact={countContact} className={'item'}>
             <AdditionalContactWrapper>
-                <IconWrapper onClick={() => handleDeleteContact(item.id)}>
+                <IconWrapper className='hidden' onClick={() => handleDeleteContact(item.id)}>
                     <Close/>
                 </IconWrapper>
             <Title>
@@ -71,7 +71,7 @@ const AdditionalContact = ({contactNumber, setCountContact, countContact, handle
                         placeholder={'First'}
                         additional={'#e9e7e7'}
                         index={item.id}
-                        value={item.firstName}
+                        value={item.FirstName}
                         countContact={countContact}
                         onChange={(e) => handleChangeFirstName(e, item.id)}
                     />
@@ -82,7 +82,7 @@ const AdditionalContact = ({contactNumber, setCountContact, countContact, handle
                         placeholder={'Last'}
                         additional={'#e9e7e7'}
                         index={item.id}
-                        value={item.lastName}
+                        value={item.LastName}
                         countContact={countContact}
                         onChange={(e) => handleChangeSecondName(e, item.id)}
                     />
@@ -94,14 +94,14 @@ const AdditionalContact = ({contactNumber, setCountContact, countContact, handle
                 <Input
                     additional={'#e9e7e7'}
                     index={item.id}
-                    value={item.email}
+                    value={item.EmailAddress}
                     countContact={countContact}
                     onChange={(e) => handleChangeEmail(e, item.id)}
                 />
             </FormWrapp>
-            <label className="container" style={{fontFamily: 'Verdana, sans-serif', fontSize: '12px'}}>
+            <label className="container additional-contact-checkbox" style={{fontFamily: 'Verdana, sans-serif', fontSize: '12px'}}>
                 <span>Include in billing emails</span>
-                <input type="checkbox" checked={item.includeEmails}  onChange={(e) => handleChangeCheckBox(e, item.id)}/>
+                <input type="checkbox" checked={item.IncludeInEmails}  onChange={(e) => handleChangeCheckBox(e, item.id)}/>
                     <span className="checkmark"></span>
             </label>
         </Wrapper>

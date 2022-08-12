@@ -9,32 +9,6 @@ import {encode, decode, Base64} from 'js-base64';
 
 const SaveModal = ({value,location, toggleSended, setModal, id}) => {
     const [email, setEmail] = useInput(null)
-    const [access_token, setAccessToken] = useInput(null)
-
-    const refresh_token = '1//09aVFk21JYDmOCgYIARAAGAkSNwF-L9IrQb0JnwcM4Gi2yCtqUNxqwGQ0hclQMWXmOjscZ3h1V1SAstWIRdW-RNAJBVa6OSuSSbI'
-    const client_secret = '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'
-    const client_id = '102125588284-c3dgc8q4v7inrok75od5pblf5g9k9jg5.apps.googleusercontent.com'
-
-
-    const params = new URLSearchParams()
-    params.append('grant_type', 'refresh_token')
-    params.append('refresh_token', refresh_token)
-    params.append('client_secret', client_secret)
-    params.append('client_id', client_id)
-
-
-    const config = {
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
-    }
-
-    const handleGetAccessToken = () => {
-        axios.post('https://oauth2.googleapis.com/token', params, config).then(r => {
-            setAccessToken(r.data.access_token)
-        })
-    }
-
 
     const text = `From: Roman Nahryshko <nagrishkoo@gmail.com> 
 To: <${email}> 
@@ -44,26 +18,21 @@ Message-ID: <1234@local.machine.example>
 
 This is a link to continue filling out the form: https://react-cloudflare-4yy.pages.dev/${id}".
 `
-    // const enctyptedText = window.btoa(text);
     const enc = Base64.encode(text)
 
-    useEffect(() => {
-        handleGetAccessToken()
-    }, [])
 
     const handleClickButton = () => {
-            axios.post('https://gmail.googleapis.com/gmail/v1/users/nagrishkoo%40gmail.com/messages/send', {
-                "raw": enc
-            }, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'Authorization': 'Bearer ya29.a0AVA9y1tKU7A304YDhtV0IjoEJ4fwC8h4XOK8l0j7PQZMgulEjJfGjyB3ThJ88yLcZKgM66s2S07HkTs50PiN3Jjp9_2IAYhwGhNKG5rpM1in3soUJox1Fw2ELbNyceQNHK7Kgvh-rPSlYxqlLynGFHrQ5qRUd0FqveIFUdZShVhrMg'
-                }
-            })
-        setModal(false)
-        toggleSended(true)
-    }
+        axios.post('https://api-html-to-pdf.lambda-team.website/send-email', {
+            "email": email,
+            "link": `https://react-cloudflare-4yy.pages.dev/${id}`
+        }, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+    setModal(false)
+    toggleSended(true)
+}
 
     return (
             <div >
