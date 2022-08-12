@@ -20,47 +20,6 @@ import getCssData from 'get-css-data';
 
 function App() {
     function getHTML(userId, radioState) {
-        // getCssData({
-        //     onComplete: async function (cssText) {
-        //         const copyHTML = document.createElement('html');
-        //         const copyHead = document.createElement('head');
-        //         const copyStyles = document.createElement('style');
-        //         copyStyles.textContent = cssText;
-        //         copyHead.appendChild(copyStyles);
-        //         copyHTML.appendChild(copyHead);
-        //         const copyBody = document.createElement('body');
-        //         copyBody.innerHTML = document.getElementById('root').innerHTML
-        //         copyHTML.appendChild(copyBody);
-        //         copyBody.querySelector('.radiobuttons').innerHTML = `<div>${radioState}</div>`;
-        //         const hiddenElements = copyBody.querySelectorAll('.hidden');
-        //         hiddenElements.forEach(element => {
-        //             element.remove();
-        //         })
-        //         const additionalContacts = copyBody.querySelectorAll('.additional-contact-checkbox');
-        //         additionalContacts.forEach((element, index) => {
-        //             element.innerHTML = `<div>Include in billing emails: ${countContact[index].IncludeInEmails ? 'Yes' : 'No'}</div>`;
-        //             element.className = '';
-        //             element.style.margin = '35px 0 0 25px';
-        //             element.style.display = 'block';
-        //         })
-        //         const sameAddressNode = copyBody.querySelector('.same-address');
-        //         sameAddressNode.innerHTML = `<div>Same as postal address: ${sameAddress ? 'Yes' : 'No'}</div>`;
-        //         sameAddressNode.style = 'white-space: nowrap; font-size: 12px; padding-left:0; font-family: Verdana, sans-serif;'
-        //         const value = copyHTML.outerHTML;
-        //         const formData = new FormData();
-        //         formData.append('html', value);
-        //         formData.append('ContactId',  userId);
-        //         const response = await axios.post('https://worker-typescript-template.nahryshko.workers.dev/api/createPdf', formData
-        //             , {
-        //                 responseType: 'arraybuffer',
-        //                 headers: {
-        //                     'Content-Type': 'multipart/form-data',
-        //                     'Accept': 'application/pdf'
-        //                 }
-        //             })
-        //         console.log(JSON.stringify(response));
-        //     }
-        // });
         const allCSS = [...document.styleSheets]
   .map((styleSheet) => {
     try {
@@ -98,7 +57,6 @@ function App() {
           sameAddressNode.innerHTML = `<div>Same as postal address: ${sameAddress ? 'Yes' : 'No'}</div>`;
           sameAddressNode.style = 'white-space: nowrap; font-size: 12px; padding-left:0; font-family: Verdana, sans-serif;'
           const value = copyHTML.outerHTML;
-          console.log(value);
           const formData = new FormData();
                 formData.append('html', value);
                 formData.append('ContactId',  userId);
@@ -320,14 +278,12 @@ function App() {
                 window.localStorage.setItem('access_token', res.data.access_token)
                 window.localStorage.setItem('refresh_token', res.data.refresh_token)
                 setRefreshToken(res.data.refresh_token)
-                console.log(res);
             })
         } else {
             await axios.post('https://worker-typescript-template.nahryshko.workers.dev/api/refresh').then(res => {
                 window.localStorage.setItem('access_token', res.data.access_token)
                 window.localStorage.setItem('refresh_token', res.data.refresh_token)
                 setRefreshToken(res.data.refresh_token)
-                console.log(res);
             })
         }
     }, [responseToken])
