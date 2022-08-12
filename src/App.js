@@ -19,39 +19,90 @@ import getCssData from 'get-css-data';
 
 
 function App() {
-
     function getHTML(userId, radioState) {
-        getCssData({
-            onComplete: async function (cssText) {
-                const copyHTML = document.createElement('html');
-                const copyHead = document.createElement('head');
-                const copyStyles = document.createElement('style');
-                copyStyles.textContent = cssText;
-                copyHead.appendChild(copyStyles);
-                copyHTML.appendChild(copyHead);
-                const copyBody = document.createElement('body');
-                copyBody.innerHTML = document.getElementById('root').innerHTML
-                copyHTML.appendChild(copyBody);
-                copyBody.querySelector('.radiobuttons').innerHTML = `<div>${radioState}</div>`;
-                const hiddenElements = copyBody.querySelectorAll('.hidden');
-                hiddenElements.forEach(element => {
-                    element.remove();
-                })
-                const additionalContacts = copyBody.querySelectorAll('.additional-contact-checkbox');
-                additionalContacts.forEach((element, index) => {
-                    element.innerHTML = `<div>Include in billing emails: ${countContact[index].IncludeInEmails ? 'Yes' : 'No'}</div>`;
-                    element.className = '';
-                    element.style.margin = '35px 0 0 25px';
-                    element.style.display = 'block';
-                })
-                const sameAddressNode = copyBody.querySelector('.same-address');
-                sameAddressNode.innerHTML = `<div>Same as postal address: ${sameAddress ? 'Yes' : 'No'}</div>`;
-                sameAddressNode.style = 'white-space: nowrap; font-size: 12px; padding-left:0; font-family: Verdana, sans-serif;'
-                const value = copyHTML.outerHTML;
-                const formData = new FormData();
+        // getCssData({
+        //     onComplete: async function (cssText) {
+        //         const copyHTML = document.createElement('html');
+        //         const copyHead = document.createElement('head');
+        //         const copyStyles = document.createElement('style');
+        //         copyStyles.textContent = cssText;
+        //         copyHead.appendChild(copyStyles);
+        //         copyHTML.appendChild(copyHead);
+        //         const copyBody = document.createElement('body');
+        //         copyBody.innerHTML = document.getElementById('root').innerHTML
+        //         copyHTML.appendChild(copyBody);
+        //         copyBody.querySelector('.radiobuttons').innerHTML = `<div>${radioState}</div>`;
+        //         const hiddenElements = copyBody.querySelectorAll('.hidden');
+        //         hiddenElements.forEach(element => {
+        //             element.remove();
+        //         })
+        //         const additionalContacts = copyBody.querySelectorAll('.additional-contact-checkbox');
+        //         additionalContacts.forEach((element, index) => {
+        //             element.innerHTML = `<div>Include in billing emails: ${countContact[index].IncludeInEmails ? 'Yes' : 'No'}</div>`;
+        //             element.className = '';
+        //             element.style.margin = '35px 0 0 25px';
+        //             element.style.display = 'block';
+        //         })
+        //         const sameAddressNode = copyBody.querySelector('.same-address');
+        //         sameAddressNode.innerHTML = `<div>Same as postal address: ${sameAddress ? 'Yes' : 'No'}</div>`;
+        //         sameAddressNode.style = 'white-space: nowrap; font-size: 12px; padding-left:0; font-family: Verdana, sans-serif;'
+        //         const value = copyHTML.outerHTML;
+        //         const formData = new FormData();
+        //         formData.append('html', value);
+        //         formData.append('ContactId',  userId);
+        //         const response = await axios.post('https://worker-typescript-template.nahryshko.workers.dev/api/createPdf', formData
+        //             , {
+        //                 responseType: 'arraybuffer',
+        //                 headers: {
+        //                     'Content-Type': 'multipart/form-data',
+        //                     'Accept': 'application/pdf'
+        //                 }
+        //             })
+        //         console.log(JSON.stringify(response));
+        //     }
+        // });
+        const allCSS = [...document.styleSheets]
+  .map((styleSheet) => {
+    try {
+      return [...styleSheet.cssRules]
+        .map((rule) => rule.cssText)
+        .join('');
+    } catch (e) {
+      console.log('Access to stylesheet %s is denied. Ignoring…', styleSheet.href);
+    }
+  })
+  .filter(Boolean)
+  .join('\n');
+  const copyHTML = document.createElement('html');
+          const copyHead = document.createElement('head');
+          const copyStyles = document.createElement('style');
+          copyStyles.textContent = allCSS;
+          copyHead.appendChild(copyStyles);
+          copyHTML.appendChild(copyHead);
+          const copyBody = document.createElement('body');
+          copyBody.innerHTML = document.getElementById('root').innerHTML
+          copyHTML.appendChild(copyBody);
+          copyBody.querySelector('.radiobuttons').innerHTML = `<div>${radioState}</div>`;
+          const hiddenElements = copyBody.querySelectorAll('.hidden');
+          hiddenElements.forEach(element => {
+              element.remove();
+          })
+          const additionalContacts = copyBody.querySelectorAll('.additional-contact-checkbox');
+          additionalContacts.forEach((element, index) => {
+              element.innerHTML = `<div>Include in billing emails: ${countContact[index].IncludeInEmails ? 'Yes' : 'No'}</div>`;
+              element.className = '';
+              element.style.margin = '35px 0 0 25px';
+              element.style.display = 'block';
+          })
+          const sameAddressNode = copyBody.querySelector('.same-address');
+          sameAddressNode.innerHTML = `<div>Same as postal address: ${sameAddress ? 'Yes' : 'No'}</div>`;
+          sameAddressNode.style = 'white-space: nowrap; font-size: 12px; padding-left:0; font-family: Verdana, sans-serif;'
+          const value = copyHTML.outerHTML;
+          console.log(value);
+          const formData = new FormData();
                 formData.append('html', value);
                 formData.append('ContactId',  userId);
-                const response = await axios.post('https://worker-typescript-template.nahryshko.workers.dev/api/createPdf', formData
+                axios.post('https://worker-typescript-template.nahryshko.workers.dev/api/createPdf', formData
                     , {
                         responseType: 'arraybuffer',
                         headers: {
@@ -59,9 +110,6 @@ function App() {
                             'Accept': 'application/pdf'
                         }
                     })
-                console.log(JSON.stringify(response));
-            }
-        });
     }
 
     const [countContact, setCountContact] = useState([{
@@ -296,7 +344,6 @@ function App() {
         const bodyContact = {
             bodyXero, token
         }
-
         setSumbitPressed(true)
         if (!email || !radio) {
             setIsError(true)
