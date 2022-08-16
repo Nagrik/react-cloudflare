@@ -1,7 +1,7 @@
 import  { useState } from 'react';
 
 
-export default (defaultValue = false) => {
+const useToggle = (defaultValue = false) => {
     const [isOn, toggle] = useState(defaultValue);
 
     const handleToggle = (value) => {
@@ -12,3 +12,6 @@ export default (defaultValue = false) => {
 
     return [isOn, handleToggle];
 };
+
+
+export default useToggle;

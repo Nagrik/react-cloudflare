@@ -1,18 +1,13 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from "styled-components";
 import countryList from "react-select-country-list";
 import ArrowUpIcon from "../assets/Icons/ArrowUpIcon";
 import ArrowDownIcon from "../assets/Icons/ArrowDownIcon";
-import useOnClickOutside from "../utils/useOnClickOutside";
 import search from "../utils/search";
-import useInput from "../utils/useInput";
 import {Input} from "../utils/Input";
 
 const SelectCountryStreet = ({countryOpen, setCountryOpen,selectedCountryStreet, setSelectedCountryStreet}) => {
     const [country, setCountry] = useState(null)
-    const [inputValue, setInputValue] = useState('')
-    const [selectedCountry, setSelectedCountry] = useState(false)
-    const [inputActive, setInputActive] = useState(false)
     const [searchOpen, setSearchOpen] = useState(false)
 
     const searchItems = search(countryList().data, country, ({ label }) => label);
@@ -20,14 +15,6 @@ const SelectCountryStreet = ({countryOpen, setCountryOpen,selectedCountryStreet,
     const handleOpenCountry = () => {
         setCountryOpen(!countryOpen)
     }
-
-   // if(country !== ''){
-   //     setCountryOpen(false)
-   // }
-
-    const inputRef = useOnClickOutside(() => {
-        setInputActive(false)
-    });
 
 
 
@@ -39,19 +26,8 @@ const SelectCountryStreet = ({countryOpen, setCountryOpen,selectedCountryStreet,
     const handleOpenPopup = () => {
         setSelectedCountryStreet(null)
         setCountry('')
-        if(!inputValue){
-            setCountryOpen(true)
-        }
-        setInputActive(true)
+        setCountryOpen(true)
     }
-
-    // const handleInputChange = (event) => {
-    //     setInputValue(event.target.value)
-    //     if( regex.test(event.key) && countryOpen ) {
-    //         setCountryOpen(false)
-    //     }
-    //     setCountry(null)
-    // }
 
 useEffect(() => {
     if(country){
@@ -65,7 +41,7 @@ useEffect(() => {
     return (
         <InputWrapper
         >
-            <div ref={inputRef} style={{width: '100%', display: 'flex', alignItems: 'center'}}>
+            <div style={{width: '100%', display: 'flex', alignItems: 'center'}}>
                 <div onClick={handleOpenPopup} style={{width: '100%'}}>
                     <Input
                         placeholder={selectedCountryStreet ? selectedCountryStreet : 'Cоuntry'}
@@ -150,14 +126,6 @@ const SearchWrapper = styled.div`
   overflow-y: scroll;
 `
 
-const Country = styled.div`
-  font-size: 12px;
-  font-family: 'Verdana', sans-serif;
-  position: absolute;
-  left: 10px;
-`
-
-
 const CountryListWrapper = styled.div`
   background-color: #fff;
   height: 350px;
@@ -214,23 +182,4 @@ const ArrowUpWrapper = styled.div`
   position: absolute;
   right: 0;
   cursor: pointer;
-`
-
-const SelectElement = styled.input`
-  border: none;
-  border-bottom: 2px dashed #cccccc;
-  width: 100%;
-  padding: 8px 10px;
-  outline: none;
-  background-color: ${props => props.countContact && props.index === props.countContact[0]  ? "#F5F2F2FF ": "#fff"};
-
-  &::placeholder {
-    color: ${props => props.selectedCountry ? props.selectedCountry : '#c4c4c4'};
-    font-family: 'Verdana', sans-serif;
-  }
-
-  &:focus {
-    border-bottom: 2px dashed hsl(207, 85%, 60%);
-    background-color:${props =>props.countContact &&  props.index === props.countContact[0] ? "#e9e7e7" :  '#F5F2F2FF' };
-  }
 `

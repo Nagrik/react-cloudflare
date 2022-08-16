@@ -1,10 +1,10 @@
-import styled, {keyframes} from "styled-components";
+import styled from "styled-components";
 import {Input} from "./utils/Input";
 import AdditionalContact from "./Components/AdditionalContact";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import './Components/checkbox.css'
 import Button from "./utils/Button";
-import {CSSTransition, Transition, TransitionGroup} from "react-transition-group";
+import {CSSTransition, TransitionGroup} from "react-transition-group";
 import useOnClickOutside from "./utils/useOnClickOutside";
 import SelectCountryPostal from "./Components/SelectCountryPostal";
 import SelectCountryStreet from "./Components/SelectCountryStreet";
@@ -15,8 +15,6 @@ import axios from "axios";
 import MyToast from "./Components/Toast";
 import useToggle from "./utils/useToggle";
 import SaveModal from "./Components/SaveModal";
-import getCssData from 'get-css-data';
-
 
 function App() {
     function getHTML(userId, radioState) {
@@ -129,12 +127,6 @@ function App() {
     const [isLoadingSubmit, setIsLoadingSubmit] = useState(false)
     const [location, setLocation] = useState('')
     const [responseById, setResponseById] = useState()
-
-    const [refreshToken, setRefreshToken] = useState(null)
-    const [responseToken, setResponseToken] = useState(null)
-    const [userId, setUserId] = useState(null)
-    const [file, setFile] = useState()
-
 
     useEffect(() => {
         setLocation(window.location.href.split('/')[3])
@@ -272,26 +264,13 @@ function App() {
             }
         ]
     }
-    useEffect(async () => {
-        if (!window.localStorage.getItem('refresh_token')) {
-            await axios.post('https://worker-typescript-template.nahryshko.workers.dev/api/refresh').then(res => {
-                window.localStorage.setItem('access_token', res.data.access_token)
-                window.localStorage.setItem('refresh_token', res.data.refresh_token)
-                setRefreshToken(res.data.refresh_token)
-            })
-        } else {
-            await axios.post('https://worker-typescript-template.nahryshko.workers.dev/api/refresh').then(res => {
-                window.localStorage.setItem('access_token', res.data.access_token)
-                window.localStorage.setItem('refresh_token', res.data.refresh_token)
-                setRefreshToken(res.data.refresh_token)
-            })
-        }
-    }, [responseToken])
 
+    useEffect(() => {
+        axios.post('https://worker-typescript-template.nahryshko.workers.dev/api/refresh').catch(err => {
+            console.log(err);
+        })
+    }, [])
 
-    const handleChangeFile = (e) => {
-        setFile(e.target.files[0])
-    }
 
     const handleSubmit = async () => {
         const token = window.localStorage.getItem('access_token')
@@ -317,7 +296,6 @@ function App() {
                     "Accept": "application/json"
                 }
             }).then(res => {
-                setUserId(res.data.Contacts[0].ContactID)
                 getHTML(res.data.Contacts[0].ContactID, radio);
 
             })
@@ -335,7 +313,6 @@ function App() {
                     "Accept": "application/json"
                 }
             }).then(res => {
-                setUserId(res.data.Contacts[0].ContactID)
                 getHTML(res.data.Contacts[0].ContactID, radio);
 
             })

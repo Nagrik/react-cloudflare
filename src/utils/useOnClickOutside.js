@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 
 
-export default (callback) => {
+const useOnClickOutside =  (callback) => {
     const containerRef = React.useRef(null);
 
     useEffect(() => {
@@ -22,3 +22,5 @@ export default (callback) => {
 
     return containerRef;
 };
+
+export default useOnClickOutside;

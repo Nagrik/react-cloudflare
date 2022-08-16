@@ -1,6 +1,5 @@
-// type GetString<T> = (item: T) => string;
 
-export default (array, input, getStringFromItem) => {
+const search = (array, input, getStringFromItem) => {
     if (!input) return array;
 
     const startWith = array.filter(
@@ -19,3 +18,5 @@ export default (array, input, getStringFromItem) => {
 
     return [...startWith, ...subtractStartWithFromContains];
 };
+
+export default search;

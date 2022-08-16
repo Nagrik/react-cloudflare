@@ -1,33 +1,48 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import styled from "styled-components";
 import CloseIcon from "../assets/Icons/CloseIcon";
 import {Input} from "../utils/Input";
 import {InputWrapper} from "../App";
 import useInput from "../utils/useInput";
 import axios from "axios";
-import {encode, decode, Base64} from 'js-base64';
 
 const SaveModal = ({value,location, toggleSended, setModal, id}) => {
     const [email, setEmail] = useInput(null)
 
-    const text = `From: Roman Nahryshko <nagrishkoo@gmail.com> 
-To: <${email}> 
-Subject: Saved form 
-Date: Tue, 22 Jun 2022 13:40:00 -0200 
-Message-ID: <1234@local.machine.example>
+    const text = `<div>
+Date: Tue, 22 Jun 2022 13:40:00 -0200 <br>
+Message-ID: <1234@local.machine.example><br>
 
-This is a link to continue filling out the form: https://react-cloudflare-4yy.pages.dev/${id}".
+<p>This is a link to continue filling out the form: https://react-cloudflare-4yy.pages.dev/${id}.</p>
+</div>
 `
-    const enc = Base64.encode(text)
-
 
     const handleClickButton = () => {
-        axios.post('https://api-html-to-pdf.lambda-team.website/send-email', {
-            "email": email,
-            "link": `https://react-cloudflare-4yy.pages.dev/${id}`
+        axios.post('https://api.elasticemail.com/v4/emails', {
+            "Recipients": [
+                {
+                    "Email": email,
+                    "Fields": {
+                        "city": "New York",
+                        "age": "34"
+                    }
+                }
+            ],
+            "Content": {
+                "Subject": "Saved form",
+                "Body": [
+                    {
+                        "ContentType": "HTML",
+                        "Content": text,
+                        "Charset": "utf-8"
+                    }
+                ],
+                "From": "Vlad Stohnii <vladislav.stohnii@gmail.com>"
+            }
         }, {
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-ElasticEmail-ApiKey': '6322AD8ED78FC02827F211B53EB39D0997D117B6965E3B65E607645A2862E9219AE7388F3F6A4B66F7996B2EDD6261C9'
             }
         })
     setModal(false)
