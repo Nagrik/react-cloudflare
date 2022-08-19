@@ -95,22 +95,22 @@ function App() {
     const [website, setWebsite] = useInput(null)
 
     //Postal Address
-    const [attention, setAttention] = useInput(null)
-    const [addressLine1, setAddressLine1] = useInput(null)
-    const [addressLine2, setAddressLine2] = useInput(null)
-    const [city, setCity] = useInput(null)
-    const [state, setState] = useInput(null)
-    const [portal, setPortal] = useInput(null)
-    const [selectedCountryPostal, setSelectedCountryPostal] = useState(null)
+    const [attention, setAttention] = useInput('')
+    const [addressLine1, setAddressLine1] = useInput('')
+    const [addressLine2, setAddressLine2] = useInput('')
+    const [city, setCity] = useInput('')
+    const [state, setState] = useInput('')
+    const [portal, setPortal] = useInput('')
+    const [selectedCountryPostal, setSelectedCountryPostal] = useState('')
 
     //Street Address
-    const [attentionStreet, setAttentionStreet] = useInput(null)
-    const [addressLineStreet1, setAddressLineStreet1] = useInput(null)
-    const [addressLineStreet2, setAddressLineStreet2] = useInput(null)
-    const [cityStreet, setCityStreet] = useInput(null)
-    const [stateStreet, setStateStreet] = useInput(null)
-    const [portalStreet, setPortalStreet] = useInput(null)
-    const [selectedCountryStreet, setSelectedCountryStreet] = useState(null)
+    const [attentionStreet, setAttentionStreet] = useInput('')
+    const [addressLineStreet1, setAddressLineStreet1] = useInput('')
+    const [addressLineStreet2, setAddressLineStreet2] = useInput('')
+    const [cityStreet, setCityStreet] = useInput('')
+    const [stateStreet, setStateStreet] = useInput('')
+    const [portalStreet, setPortalStreet] = useInput('')
+    const [selectedCountryStreet, setSelectedCountryStreet] = useState('')
 
     //Company Financial Details
     const [VATNumber, setVATNumber] = useInput(null)
@@ -722,7 +722,7 @@ function App() {
                             <SaveModal
                                 location={location}
                                 id={idResponse}
-                                value={`https://react-cloudflare-4yy.pages.dev/${idResponse}`}
+                                value={`https://react-cloudflare-4yy.pages.dev/${idResponse || location}`}
                                 setModal={setModal}
                                 sended={sended}
                                 toggleSended={toggleSended}

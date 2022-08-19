@@ -8,15 +8,13 @@ import axios from "axios";
 
 const SaveModal = ({value,location, toggleSended, setModal, id}) => {
     const [email, setEmail] = useInput(null)
-
     const text = `<div>
 Date: Tue, 22 Jun 2022 13:40:00 -0200 <br>
 Message-ID: <1234@local.machine.example><br>
 
-<p>This is a link to continue filling out the form: https://react-cloudflare-4yy.pages.dev/${id}.</p>
+<p>This is a link to continue filling out the form: https://react-cloudflare-4yy.pages.dev/${id || location}.</p>
 </div>
 `
-
     const handleClickButton = () => {
         axios.post('https://api.elasticemail.com/v4/emails', {
             "Recipients": [
